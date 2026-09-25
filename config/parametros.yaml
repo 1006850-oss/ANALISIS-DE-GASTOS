@@ -21,6 +21,7 @@ gasto:
   campo_monto_gasto: "Monto facturado"
   campo_monto_oc: "Monto MN"
   # Cuenta como gasto toda factura registrada, sin importar su estado de pago.
+  # "Factura pendiente" (Estado de OC) = factura registrada pero no pagada: SÍ cuenta como gasto.
   estados_factura_excluidos: []
 
 # Niveles de aprobación de OC (política de compras, incluyen IGV, iguales para bienes,
@@ -45,7 +46,7 @@ aprobacion_oc:
   - nivel: 5
     hasta_pen: null   # sin límite superior
     hasta_usd: null
-    aprueba: ["Jefe de Área", "Gerente de Área", "GAF", "Gerencia División Soporte"]
+    aprueba: ["Jefe de Área", "Gerente de Área", "GAF", "Gerencia División Soporte", "CEO"]
 
 fraccionamiento:
   # Se buscan OC del mismo proveedor dentro de esta ventana de días (por Fecha de OC).
@@ -65,8 +66,11 @@ columnas_ignoradas:
   - "Concepto"
 
 rutas:
-  # Carpeta de Google Drive sincronizada en la computadora. Ajustar a la ruta real.
-  raiz_datos: "RUTA_A_GOOGLE_DRIVE/analisis-gastos"
+  # Carpeta de Google Drive "analisis de gastos" (propietario: el usuario).
+  drive_carpeta_id: "1mZsi-I-oM9YzQbtjmVRzPI7iB3LG_pXm"
+  drive_url: "https://drive.google.com/drive/folders/1mZsi-I-oM9YzQbtjmVRzPI7iB3LG_pXm"
+  # Ruta local si la carpeta se sincroniza con Google Drive para escritorio (ajustar en cada equipo).
+  raiz_datos: "RUTA_LOCAL_A_GOOGLE_DRIVE/analisis de gastos"
   entrada: "entrada"        # exportación del ERP del semestre (xlsx)
   maestro: "maestro"        # maestro_categorias.xlsx
   historico: "historico"    # resultados acumulados por semestre

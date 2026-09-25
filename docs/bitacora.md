@@ -20,3 +20,11 @@ Decisiones:
 Entregables: `docs/diccionario_datos.md`, `docs/reglas_negocio.md`, `config/parametros.yaml`, `docs/pendientes.md`, estructura de carpetas.
 
 Para el Hilo 1: extracto real (xlsx), ruta de Google Drive, pendiente #1 (estado de la OC 35490).
+
+### Hilo 0 – respuestas a pendientes (2026-09-25)
+- "Factura pendiente" = factura registrada pero no pagada (cuenta como gasto).
+- Nivel 5 incluye al CEO.
+- Límite superior de cada nivel es inclusivo.
+- Carpeta de Drive: "analisis de gastos" (`1mZsi-I-oM9YzQbtjmVRzPI7iB3LG_pXm`), acceso verificado; está vacía.
+- "SUPERVISOR" = aprobador de la OC. La data trae un solo aprobador por OC: no se puede verificar la cadena completa de aprobación.
+- Pendiente: extracto real.

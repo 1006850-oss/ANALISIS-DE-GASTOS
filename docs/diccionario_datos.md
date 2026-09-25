@@ -27,14 +27,14 @@ Formato: xlsx, ~200 000 registros por semestre, siempre las mismas 26 columnas y
 | 16 | Periodo Factura | texto | Sí | Mes de la factura (`may 2017`) | **Semestre del gasto** | Meses en español abreviado |
 | 17 | Estado Factura | texto | Sí | Estado de pago | Informativo | Solo "Pagado por completo" |
 | 18 | COMPRADOR | texto | Sí | Comprador que emite la OC | Cruces | 4 compradores (A–D) |
-| 19 | SUPERVISOR | texto | Sí | Supervisor de compras | Control interno | 1 solo supervisor (F) |
+| 19 | SUPERVISOR | texto | Sí | **Aprobador de la OC** | Control interno | 1 solo supervisor (F) |
 | 20 | Articulo | texto | Sí | **Categoría de compra** (según el usuario) | Nivel 1 de la taxonomía | 10 valores; mezcla mayúsculas y prefijos ("Ventas :", "VENTAS :") |
 | 21 | Descripcion | texto | Sí | Descripción de la OC | Subcategoría / producto (Hilo 2) | `_x000D_` en 3 filas; espacios al inicio |
 | 22 | Concepto | texto | No | Sin valor analítico (según el usuario) | **Se ignora** | 28 valores distintos en 28 filas |
 | 23 | Departamento | texto | Sí | Área solicitante | Filtro | Solo "CONST" |
 | 24 | Clase | texto | No | **Glosa de palabras clave** que se coloca en la descripción de la OC | Etiqueta auxiliar | Vacía en 7 filas; trae años (`Ampliaciones 2018`) que no coinciden con el año de la OC |
 | 25 | ID Interno OC | entero | Sí | Identificador interno del ERP | Llave técnica | 1 a 1 con N° de OC |
-| 26 | Estado de OC | texto | Sí | Estado de facturación de la OC | Ciclo OC→factura | "Totalmente facturado" (22) / "Factura pendiente" (6) |
+| 26 | Estado de OC | texto | Sí | Estado de la OC. "Factura pendiente" = factura registrada pero no pagada | Ciclo OC→factura | "Totalmente facturado" (22) / "Factura pendiente" (6) |
 
 ## Columnas que agregará el Hilo 1
 

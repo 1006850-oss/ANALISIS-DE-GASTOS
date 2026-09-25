@@ -1,7 +1,7 @@
 Trabajo en el repositorio `analisis-de-gastos`. Lee `PLAN.md` y `docs/bitacora.md` (si no están en tu rama, están en la rama `claude/zen-rubin-srjgvq` o en la rama donde se cerró el Hilo 0). Hoy desarrollamos el **Hilo 1 – Carga, limpieza y validación**. Al terminar, deja el código probado, actualiza la bitácora y haz commit.
 
 ## Contexto
-Soy ingeniero industrial, trabajo en educación (colegios) y enseño dirección de proyectos. Construyo un análisis de gastos de compras que se repetirá cada semestre sobre una base de más de 100 000 registros (órdenes de compra y facturas del ERP). Adjunto la muestra de 28 filas y, si lo tengo, un extracto real o anonimizado. Respóndeme en lenguaje sencillo y verifica todo sobre los datos antes de afirmarlo.
+Soy ingeniero industrial, trabajo en educación (colegios) y enseño dirección de proyectos. Construyo un análisis de gastos de compras que se repetirá cada semestre sobre una base de más de 100 000 registros (órdenes de compra y facturas del ERP). Adjunto la muestra de 28 filas y el extracto real (xlsx). Los datos viven en la carpeta de Google Drive indicada en `config/parametros.yaml`. Respóndeme en lenguaje sencillo y verifica todo sobre los datos antes de afirmarlo.
 
 ## Paso 0 – Verifica que el Hilo 0 esté cerrado
 Antes de programar, confirma que existen `docs/diccionario_datos.md`, `docs/reglas_negocio.md` y `config/parametros.yaml`. Si faltan o tienen puntos abiertos en `docs/pendientes.md` que afecten la limpieza (por ejemplo, qué estados cuentan como gasto o cómo se define el semestre), DETENTE, dime cuáles faltan y hazme solo esas preguntas.
@@ -35,7 +35,7 @@ Columnas que debe agregar el script:
 - `id_linea` (identificador único), `semestre` (`AAAA-S1`/`AAAA-S2` según "Periodo Factura").
 - `monto_gasto` = "Monto facturado" en soles (convertido con TC si hubiera otra moneda).
 - `es_primera_linea_oc` (1 solo en la primera fila de cada OC), para contar el monto de la OC una sola vez.
-- `con_factura_pendiente` según "Estado de OC" (6 filas en la muestra; ver pendiente #1 de `docs/pendientes.md`).
+- `con_factura_pendiente` según "Estado de OC": "Factura pendiente" = registrada pero no pagada; cuenta como gasto (6 filas en la muestra). Advertir si contradice "Estado Factura" (pendiente #8).
 - `nivel_aprobacion_oc` (1 a 5) según "Monto MN" de la OC y los niveles de `config/parametros.yaml`.
 - Banderas de calidad por fila (ej. `flag_clase_vacia`, `flag_duplicado`).
 

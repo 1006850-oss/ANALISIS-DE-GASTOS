@@ -7,6 +7,8 @@ Versión 2026-09-25 (Hilo 0). Los valores numéricos viven en `config/parametros
 - "Monto MN" es el monto de la OC y se repite en cada factura. Solo se usa contando **una vez por OC** (`es_primera_linea_oc = 1`).
 - Control: en la muestra, gasto = S/ 2 454 438.56; suma ingenua de "Monto MN" = S/ 5 864 650.11 (doble conteo).
 - Cuenta como gasto **toda factura registrada**, sin importar su estado de pago. El estado se conserva para el análisis del ciclo OC → factura.
+- "Estado de OC" = "Factura pendiente" significa **factura registrada pero no pagada** (confirmado por el usuario). Cuenta como gasto y se marca como pendiente de pago.
+- En la muestra, las 6 filas "Factura pendiente" (OC 35490) dicen "Pagado por completo" en "Estado Factura". Es una contradicción (posible efecto de la mezcla de la muestra): el Hilo 1 debe reportarla como advertencia si aparece en la data real.
 
 ## 2. Periodo
 - Semestre: S1 = enero–junio, S2 = julio–diciembre.
@@ -21,9 +23,13 @@ Montos con IGV, iguales para bienes, servicios y obras. Se evalúan con el **mon
 | 2 | >35 000 a 250 000 | >10 000 a 75 000 | Jefe de Área, Gerente de Área |
 | 3 | >250 000 a 1 000 000 | >75 000 a 300 000 | + GAF |
 | 4 | >1 000 000 a 2 000 000 | >300 000 a 600 000 | + Gerencia División Soporte |
-| 5 | >2 000 000 | >600 000 | Jefe de Área, Gerente de Área, GAF, Gerencia División Soporte |
+| 5 | >2 000 000 | >600 000 | + CEO |
 
 En la muestra: 11 OC en nivel 1, 10 en nivel 2, 2 en nivel 3.
+
+El límite superior de cada nivel es inclusivo (confirmado: S/ 35 000 exactos = nivel 1).
+
+**Supervisor:** el campo "SUPERVISOR" es el **aprobador de la OC** (confirmado por el usuario). La exportación trae un solo aprobador por OC, aunque la política exige varios desde el nivel 2. Por eso la data no permite verificar la cadena completa de aprobación; el Hilo 4 reportará las OC de nivel ≥ 2 y la concentración de aprobaciones por supervisor.
 
 ## 4. Compras fraccionadas
 - Grupo: OC del **mismo proveedor (RUC)** con fecha de OC dentro de **60 días**.
@@ -46,5 +52,5 @@ En la muestra: 11 OC en nivel 1, 10 en nivel 2, 2 en nivel 3.
 - Cuadrantes: estratégico, apalancamiento, cuello de botella, no crítico.
 
 ## 8. Confidencialidad
-- La data real vive en Google Drive (`entrada/`, `maestro/`, `historico/`, `salida/`), no en este repositorio.
+- La data real vive en la carpeta de Google Drive "analisis de gastos" (id `1mZsi-I-oM9YzQbtjmVRzPI7iB3LG_pXm`), con subcarpetas `entrada/`, `maestro/`, `historico/`, `salida/`. No en este repositorio.
 - Los scripts procesan la data en el entorno del usuario. Al LLM solo se le envían descripciones únicas, sin RUC ni montos.
