@@ -23,17 +23,20 @@ Cada validación debe clasificarse como **BLOQUEA** (el proceso se detiene y exp
 ## Paso 2 – Limpieza y transformación
 Problemas ya detectados en la muestra (verifícalos tú mismo):
 - "Proveedor" trae el RUC pegado al nombre (ej. `20267879398 PORTALAMPARAS S.A.C.`) → separar en `ruc` y `proveedor`.
-- "Clase" mezcla tipo de obra y año (`Ampliaciones 2018`, `Obras Nuevas`) y está vacía en 7 filas → separar en `clase_tipo` y `clase_anio`; marcar vacíos.
+- "Clase" es una glosa de palabras clave; mezcla texto y año (`Ampliaciones 2018`, `Obras Nuevas`) y está vacía en 7 filas → separar en `clase_glosa` y `clase_anio`; marcar vacíos.
+- "Articulo" es la categoría de compra; mezcla mayúsculas y prefijos (`Ventas : Alojamiento`, `VENTAS : Materiales...`) → crear `articulo_normalizado` sin perder el original.
+- "N° de Factura" tiene formatos mixtos (`FA 0001-000311`, `FA-...`) → normalizar antes de buscar duplicados.
 - "Descripcion" trae el texto basura `_x000D_` (3 filas) y espacios al inicio → limpiar.
 - "Periodo Factura" viene como texto en español (`may 2017`, `ago 2015`, `dic 2016`) → convertir a fecha.
-- "Procura" está vacía en las 28 filas → confirmar si se conserva.
+- "Procura" y "Concepto" se ignoran (decisión del Hilo 0).
 - "Monto MN" es el monto total de la OC y se repite en cada factura → NUNCA sumarlo por fila.
 
 Columnas que debe agregar el script:
-- `id_linea` (identificador único), `semestre` (según la regla del Hilo 0).
+- `id_linea` (identificador único), `semestre` (`AAAA-S1`/`AAAA-S2` según "Periodo Factura").
 - `monto_gasto` = "Monto facturado" en soles (convertido con TC si hubiera otra moneda).
 - `es_primera_linea_oc` (1 solo en la primera fila de cada OC), para contar el monto de la OC una sola vez.
-- `con_factura_pendiente` según "Estado de OC" (6 filas en la muestra).
+- `con_factura_pendiente` según "Estado de OC" (6 filas en la muestra; ver pendiente #1 de `docs/pendientes.md`).
+- `nivel_aprobacion_oc` (1 a 5) según "Monto MN" de la OC y los niveles de `config/parametros.yaml`.
 - Banderas de calidad por fila (ej. `flag_clase_vacia`, `flag_duplicado`).
 
 ## Paso 3 – Rendimiento con más de 100 000 registros

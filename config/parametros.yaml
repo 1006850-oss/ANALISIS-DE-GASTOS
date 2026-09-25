@@ -1,0 +1,78 @@
+# Parámetros del análisis de gastos de compras.
+# Cambia estos valores aquí; los scripts no deben tener números escritos en el código.
+# Versión: 2026-09-25 (Hilo 0)
+
+periodo:
+  # Semestres: S1 = enero–junio, S2 = julio–diciembre.
+  # El gasto se asigna al semestre según "Periodo Factura" (cuando se factura).
+  campo_fecha_gasto: "Periodo Factura"
+  campo_fecha_complementaria: "Fecha de OC"
+  s1_meses: [1, 2, 3, 4, 5, 6]
+  s2_meses: [7, 8, 9, 10, 11, 12]
+
+moneda:
+  # Moneda de reporte. Los montos en otra moneda se convierten con el TC de la misma fila.
+  base: "PEN"
+  valor_moneda_base: "Soles"
+
+gasto:
+  # El gasto se mide con "Monto facturado" por fila. "Monto MN" es el total de la OC
+  # y se repite en cada factura: nunca se suma por fila.
+  campo_monto_gasto: "Monto facturado"
+  campo_monto_oc: "Monto MN"
+  # Cuenta como gasto toda factura registrada, sin importar su estado de pago.
+  estados_factura_excluidos: []
+
+# Niveles de aprobación de OC (política de compras, incluyen IGV, iguales para bienes,
+# servicios y obras). Límite superior inclusivo: S/ 35 000 exactos es nivel 1.
+aprobacion_oc:
+  - nivel: 1
+    hasta_pen: 35000
+    hasta_usd: 10000
+    aprueba: ["Jefe de Área"]
+  - nivel: 2
+    hasta_pen: 250000
+    hasta_usd: 75000
+    aprueba: ["Jefe de Área", "Gerente de Área"]
+  - nivel: 3
+    hasta_pen: 1000000
+    hasta_usd: 300000
+    aprueba: ["Jefe de Área", "Gerente de Área", "GAF"]
+  - nivel: 4
+    hasta_pen: 2000000
+    hasta_usd: 600000
+    aprueba: ["Jefe de Área", "Gerente de Área", "GAF", "Gerencia División Soporte"]
+  - nivel: 5
+    hasta_pen: null   # sin límite superior
+    hasta_usd: null
+    aprueba: ["Jefe de Área", "Gerente de Área", "GAF", "Gerencia División Soporte"]
+
+fraccionamiento:
+  # Se buscan OC del mismo proveedor dentro de esta ventana de días (por Fecha de OC).
+  ventana_dias: 60
+  agrupar_por: ["ruc"]
+  # Alerta cuando cada OC queda bajo un límite de aprobación y la suma del grupo lo supera.
+  minimo_oc_en_grupo: 2
+
+pareto_abc:
+  # Clasificación por % acumulado del gasto (proveedores ordenados de mayor a menor).
+  corte_a: 0.80
+  corte_b: 0.95
+
+columnas_ignoradas:
+  # Campos vacíos o sin valor analítico (confirmado por el usuario).
+  - "Procura"
+  - "Concepto"
+
+rutas:
+  # Carpeta de Google Drive sincronizada en la computadora. Ajustar a la ruta real.
+  raiz_datos: "RUTA_A_GOOGLE_DRIVE/analisis-gastos"
+  entrada: "entrada"        # exportación del ERP del semestre (xlsx)
+  maestro: "maestro"        # maestro_categorias.xlsx
+  historico: "historico"    # resultados acumulados por semestre
+  salida: "salida"          # resultados del ciclo
+
+volumen:
+  # Referencia para pruebas de rendimiento.
+  registros_por_semestre_aprox: 200000
+  formato_entrada: "xlsx"
