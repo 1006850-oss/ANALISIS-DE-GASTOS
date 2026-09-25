@@ -1,0 +1,12 @@
+# La data real no se versiona
+data/
+entrada/
+salida/
+*.xlsx
+*.xls
+*.csv
+*.parquet
+!plantillas/*.xlsx
+!tests/datos/*
+__pycache__/
+.venv/
