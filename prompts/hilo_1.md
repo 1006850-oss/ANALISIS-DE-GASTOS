@@ -1,10 +1,10 @@
-Trabajo en el repositorio `analisis-de-gastos`. Lee `PLAN.md` y `docs/bitacora.md` (si no están en tu rama, están en la rama `claude/zen-rubin-srjgvq` o en la rama donde se cerró el Hilo 0). Hoy desarrollamos el **Hilo 1 – Carga, limpieza y validación**. Al terminar, deja el código probado, actualiza la bitácora y haz commit.
+Trabajo en el repositorio `analisis-de-gastos`. Lee `PLAN.md` y `docs/bitacora.md` (si no están en tu rama, trae la rama `claude/zen-rubin-srjgvq`, donde se cerró el Hilo 0). Hoy desarrollamos el **Hilo 1 – Carga, limpieza y validación**. Al terminar, deja el código probado, actualiza la bitácora y haz commit.
 
 ## Contexto
-Soy ingeniero industrial, trabajo en educación (colegios) y enseño dirección de proyectos. Construyo un análisis de gastos de compras que se repetirá cada semestre sobre una base de más de 100 000 registros (órdenes de compra y facturas del ERP). Adjunto la muestra de 28 filas y el extracto real (xlsx). Los datos viven en la carpeta de Google Drive indicada en `config/parametros.yaml`. Respóndeme en lenguaje sencillo y verifica todo sobre los datos antes de afirmarlo.
+Soy ingeniero industrial, trabajo en educación (colegios) y enseño dirección de proyectos. Construyo un análisis de gastos de compras que se repetirá cada semestre sobre una base de unos 200 000 registros por semestre (órdenes de compra y facturas del ERP). Adjunto la muestra de 28 filas y el extracto real (xlsx). Los datos viven en la carpeta de Google Drive indicada en `config/parametros.yaml`. Respóndeme en lenguaje sencillo y verifica todo sobre los datos antes de afirmarlo.
 
 ## Paso 0 – Verifica que el Hilo 0 esté cerrado
-Antes de programar, confirma que existen `docs/diccionario_datos.md`, `docs/reglas_negocio.md` y `config/parametros.yaml`. Si faltan o tienen puntos abiertos en `docs/pendientes.md` que afecten la limpieza (por ejemplo, qué estados cuentan como gasto o cómo se define el semestre), DETENTE, dime cuáles faltan y hazme solo esas preguntas.
+Antes de programar, confirma que existen `docs/diccionario_datos.md`, `docs/reglas_negocio.md` y `config/parametros.yaml`. Si faltan o tienen puntos abiertos en `docs/pendientes.md` que afecten la limpieza (por ejemplo, qué estados cuentan como gasto o cómo se define el semestre), DETENTE, dime cuáles faltan y hazme solo esas preguntas. Los pendientes #4 (extracto real), #7 (subcarpetas de Drive) y #8 (contradicción de estados) ya son conocidos y no bloquean este hilo.
 
 ## Objetivo de este hilo
 Construir `scripts/limpiar_validar.py`: recibe la exportación cruda del ERP y entrega una tabla limpia, confiable y lista para todos los análisis. En este hilo NO se hacen análisis (Pareto, fraccionamiento, etc.).
@@ -39,17 +39,17 @@ Columnas que debe agregar el script:
 - `nivel_aprobacion_oc` (1 a 5) según "Monto MN" de la OC y los niveles de `config/parametros.yaml`.
 - Banderas de calidad por fila (ej. `flag_clase_vacia`, `flag_duplicado`).
 
-## Paso 3 – Rendimiento con más de 100 000 registros
-- Si no hay extracto real, crea `tests/generar_sintetico.py` que genere 150 000 filas con la misma estructura de la muestra (con duplicados y errores sembrados a propósito).
+## Paso 3 – Rendimiento con unos 200 000 registros
+- Crea `tests/generar_sintetico.py` que genere 250 000 filas con la misma estructura de la muestra (con duplicados y errores sembrados a propósito). Si tengo el extracto real, pruébalo también con él.
 - Mide el tiempo de ejecución e informa. Meta: pocos minutos en una laptop normal.
-- Lee xlsx y csv. Guarda la tabla limpia en Parquet (para procesar) y un resumen en Excel (para revisar). No generes un Excel con las 100 000 filas salvo que yo lo pida.
+- Lee xlsx y csv. Guarda la tabla limpia en Parquet (para procesar) y un resumen en Excel (para revisar). No generes un Excel con todas las filas salvo que yo lo pida.
 - Todas las rutas y umbrales salen de `config/parametros.yaml`, no escritos en el código.
 
 ## Paso 4 – Pruebas automáticas (pytest)
 1. Muestra normal: suma de `monto_gasto` = S/ 2 454 438.56; suma de "Monto MN" con `es_primera_linea_oc` = gasto de OC sin doble conteo; 23 OC distintas; 14 proveedores.
 2. Columna faltante o renombrada → el script se detiene con un mensaje claro.
 3. Factura duplicada sembrada → se detecta.
-4. Base sintética de 150 000 filas → corre sin errores y el control de totales cuadra.
+4. Base sintética de 250 000 filas → corre sin errores y el control de totales cuadra.
 5. Ejecutar dos veces con la misma entrada da exactamente el mismo resultado.
 
 ## Entregables
