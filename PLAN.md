@@ -39,7 +39,11 @@ aquí su entrega.
 
 Los hilos 2 y 4 pueden trabajarse en paralelo después del hilo 1.
 
-## Prompt de arranque para cada hilo
+## Prompts
+
+El prompt completo de cada hilo se guarda en `prompts/hilo_N.md`. Todos empiezan con la línea de arranque:
+
+## Línea de arranque
 
 > Trabajo en el repositorio `analisis-de-gastos`. Lee `PLAN.md` y `docs/bitacora.md`.
 > Hoy desarrollamos el **Hilo N – [bloque]**. Al terminar, deja el código probado,
