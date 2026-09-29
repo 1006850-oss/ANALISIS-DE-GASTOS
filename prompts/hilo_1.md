@@ -4,7 +4,7 @@ Trabajo en el repositorio `analisis-de-gastos`. Lee `PLAN.md` y `docs/bitacora.m
 Soy ingeniero industrial, trabajo en educación (colegios) y enseño dirección de proyectos. Construyo un análisis de gastos de compras que se repetirá cada semestre sobre un histórico de 103 050 registros (2015–2017, ~17 000 por semestre) (órdenes de compra y facturas del ERP). Adjunto la muestra de 28 filas y el extracto real "DATA TOTAL SOLO.xlsx" (13.6 MB; también está en la carpeta de Google Drive indicada en `config/parametros.yaml`). El extracto ya fue perfilado: lee `docs/perfil_extracto_real.md` antes de empezar y verifica sus cifras. Respóndeme en lenguaje sencillo y verifica todo sobre los datos antes de afirmarlo.
 
 ## Paso 0 – Verifica que el Hilo 0 esté cerrado
-Antes de programar, confirma que existen `docs/diccionario_datos.md`, `docs/reglas_negocio.md` y `config/parametros.yaml`. Si faltan o tienen puntos abiertos en `docs/pendientes.md` que afecten la limpieza (por ejemplo, qué estados cuentan como gasto o cómo se define el semestre), DETENTE, dime cuáles faltan y hazme solo esas preguntas. Los pendientes #7 y #8 ya son conocidos y no bloquean este hilo. El pendiente #9 (monto total de la OC) **es lo primero que se resuelve en este hilo**, junto conmigo.
+Antes de programar, confirma que existen `docs/diccionario_datos.md`, `docs/reglas_negocio.md` y `config/parametros.yaml`. Si faltan o tienen puntos abiertos en `docs/pendientes.md` que afecten la limpieza (por ejemplo, qué estados cuentan como gasto o cómo se define el semestre), DETENTE, dime cuáles faltan y hazme solo esas preguntas. El único pendiente abierto es el #9 (monto total de la OC) **es lo primero que se resuelve en este hilo**, junto conmigo.
 
 ## Paso 0.5 – Resolver el nivel de detalle (pendiente #9)
 Ya confirmé que **cada fila es una línea de la OC**. En la muestra, "Monto MN" era el total de la OC repetido en cada factura; en la data real cambia dentro de la OC en 8 039 OC (y se repite en otras 2 199). Analiza la data y proponme, con ejemplos concretos (sin nombres de personas):
@@ -47,7 +47,7 @@ Columnas que debe agregar el script:
 - `id_linea` (identificador único), `semestre` (`AAAA-S1`/`AAAA-S2` según "Periodo Factura").
 - `monto_gasto` = "Monto facturado" en soles (convertido con TC si hubiera otra moneda).
 - `es_primera_linea_oc` (1 solo en la primera fila de cada OC), para contar el monto de la OC una sola vez.
-- `con_factura_pendiente` según "Estado de OC": "Factura pendiente" = registrada pero no pagada; cuenta como gasto (6 filas en la muestra). Advertir si contradice "Estado Factura" (pendiente #8).
+- `pendiente_de_pago` según **"Estado Factura"** (manda sobre "Estado de OC"): 1 si es distinto de "Pagado por completo" o no hay factura. Toda factura registrada cuenta como gasto. Reportar como advertencia informativa las filas donde "Estado de OC" = Factura pendiente y "Estado Factura" = Pagado por completo (1 795 en la data real).
 - `nivel_aprobacion_oc` (1 a 5) según el monto total de la OC (regla del Paso 0.5) y los niveles de `config/parametros.yaml`.
 - Banderas de calidad por fila (ej. `flag_clase_vacia`, `flag_duplicado`).
 

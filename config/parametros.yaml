@@ -22,6 +22,9 @@ gasto:
   campo_monto_oc: "Monto MN"
   # Cuenta como gasto toda factura registrada, sin importar su estado de pago.
   # "Factura pendiente" (Estado de OC) = factura registrada pero no pagada: SÍ cuenta como gasto.
+  # Si "Estado de OC" y "Estado Factura" se contradicen, MANDA "Estado Factura" (decisión 2026-09-29).
+  campo_estado_pago: "Estado Factura"
+  estados_pagados: ["Pagado por completo"]
   estados_factura_excluidos: []
 
 # Niveles de aprobación de OC (política de compras, incluyen IGV, iguales para bienes,
@@ -83,10 +86,16 @@ rutas:
   # Extracto real entregado el 2026-09-29 (13.6 MB, en la carpeta raíz de Drive).
   extracto_real_nombre: "DATA TOTAL SOLO.xlsx"
   extracto_real_drive_id: "1B6W7a1iF_iEQ386QzbFv6I19do_TF5DO"
-  entrada: "entrada"        # exportación del ERP del semestre (xlsx)
+  entrada: "entrada"        # exportación del ERP (xlsx)
   maestro: "maestro"        # maestro_categorias.xlsx
   historico: "historico"    # resultados acumulados por semestre
   salida: "salida"          # resultados del ciclo
+  # Subcarpetas creadas en Drive el 2026-09-29.
+  drive_subcarpetas_id:
+    entrada: "1eCyLkX8DoM463el7rDo4KJ-EtFU5_P3P"
+    maestro: "1-80B8yMOka8EwLXTVSEKV4y8cObEiX8w"
+    historico: "1r--kLifC52WPiFHC4MM8-qOPJrbURUrb"
+    salida: "1n7dF6PZrxsb0QMs6dCNtax7XS7xlFGh1"
 
 volumen:
   # Referencia para pruebas de rendimiento.

@@ -47,3 +47,9 @@ Para el Hilo 1: extracto real (xlsx), ruta de Google Drive, pendiente #1 (estado
 - #10: "Supervisor" es quien aprueba → autoaprobación en el 94 % de las OC (hallazgo para el Hilo 4).
 - #11: "Concepto" se usa como apoyo a la taxonomía.
 - #12: no hay data posterior a 2017; el proyecto trabaja con 2015–2017.
+
+### 2026-09-29 – Cierre de pendientes #7 y #8
+- #7: subcarpetas `entrada/`, `maestro/`, `historico/`, `salida/` creadas en Drive.
+- #8: si los estados se contradicen, manda "Estado Factura".
+- #9: se resuelve en el Hilo 1 (acordado).
+- Único pendiente abierto: #9.

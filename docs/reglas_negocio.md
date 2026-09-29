@@ -12,7 +12,8 @@ Versión 2026-09-25 (Hilo 0). Los valores numéricos viven en `config/parametros
 - Control: en la muestra, gasto = S/ 2 454 438.56; suma ingenua de "Monto MN" = S/ 5 864 650.11 (doble conteo).
 - Cuenta como gasto **toda factura registrada**, sin importar su estado de pago. El estado se conserva para el análisis del ciclo OC → factura.
 - "Estado de OC" = "Factura pendiente" significa **factura registrada pero no pagada** (confirmado por el usuario). Cuenta como gasto y se marca como pendiente de pago.
-- En la muestra, las 6 filas "Factura pendiente" (OC 35490) dicen "Pagado por completo" en "Estado Factura". Es una contradicción (posible efecto de la mezcla de la muestra): el Hilo 1 debe reportarla como advertencia si aparece en la data real.
+- Si "Estado de OC" y "Estado Factura" se contradicen, **manda "Estado Factura"** (decisión del usuario, 2026-09-29). En la data real hay 1 795 filas con "Factura pendiente" en la OC y "Pagado por completo" en la factura: se consideran **pagadas**. El Hilo 1 las cuenta en el reporte de calidad como advertencia informativa.
+- Pendiente de pago = "Estado Factura" distinto de "Pagado por completo" ("Pendiente", "Aprobación pendiente") o sin factura.
 
 ## 2. Periodo
 - Semestre: S1 = enero–junio, S2 = julio–diciembre.
