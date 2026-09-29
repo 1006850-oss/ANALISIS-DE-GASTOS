@@ -25,3 +25,12 @@ python scripts/clasificar.py --aplicar-validacion validacion_taxonomia.xlsx --ma
 
 Salidas: `tabla_clasificada.parquet`, `resumen_clasificacion.xlsx`, `nuevas_para_validar.xlsx` y, según opciones,
 `maestro_propuesto.xlsx` y `validacion_taxonomia.xlsx`. Reglas editables en `config/reglas_taxonomia.yaml`.
+
+## Hilo 3 – `analizar.py`
+
+```bash
+python scripts/analizar.py --tabla <tabla_clasificada.parquet> --salida <carpeta> [--desde 2015-S1 --hasta 2017-S2]
+```
+
+Salidas: `tablas/*.parquet` (una por análisis), `resultados_descriptivos.xlsx` (hoja "Control" + una hoja por análisis),
+`graficos/*.png` y `hallazgos.md`. Devuelve código 1 si alguna tabla no cuadra con el total.

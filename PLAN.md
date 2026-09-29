@@ -30,7 +30,7 @@ aquí su entrega.
 | 0 ✅ | Fundaciones: decisiones, estructura, reglas | – | Diccionario de datos, reglas de negocio, parámetros, estructura de carpetas |
 | 1 ✅ | Carga, limpieza y validación | 0 | `limpiar_validar.py` + tabla limpia + reporte de calidad |
 | 2 🟡 | Taxonomía y maestro de categorías (falta la validación del usuario) | 1 | `clasificar.py` + `maestro_categorias.xlsx` validado |
-| 3 | Análisis descriptivo (Pareto, frecuencias, montos, cruces) | 1, 2 | `analizar.py` |
+| 3 ✅ | Análisis descriptivo (Pareto, frecuencias, montos, cruces) — cifras por categoría provisionales hasta validar la taxonomía | 1, 2 | `analizar.py` |
 | 4 | Control y alertas (fraccionamiento, duplicados, ciclo OC→factura, adicionales, giro) | 1 | `alertas.py` |
 | 5 | Matriz de Kraljic | 2, 3 | `kraljic.py` + plantilla de puntaje de riesgo |
 | 6 | Plan de compras anual | 2, 3 | `proyectar.py` |

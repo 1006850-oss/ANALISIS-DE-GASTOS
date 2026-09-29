@@ -99,3 +99,22 @@ Resultados (extracto 2015–2017):
 
 Pruebas: 25 pruebas pytest (14 del Hilo 1 + 11 del Hilo 2), todas pasan.
 Pendiente: validación del usuario (pendiente #13). Para los Hilos 3 y 5: usar `tabla_clasificada.parquet`; Kraljic debe excluir `excluir_de_kraljic`.
+
+## Hilo 3 – Análisis descriptivo – 2026-09-29 (cerrado; cifras por categoría provisionales hasta validar la taxonomía)
+Decisiones aprobadas por el usuario:
+- Formato de las 7 salidas aprobado.
+- Periodo por factura; **no se muestran 2014 ni 2018**: ventana 2015-S1 a 2017-S2. La hoja "Control" reporta lo que queda fuera (S/ 7 635 468.09).
+- Tendencia en **soles nominales**.
+
+Cifras oficiales (2015-S1 a 2017-S2; gasto analizado S/ 275 378 383.86):
+- 1 399 proveedores: A = 81 (5.8 %, 80.1 % del gasto) · B = 198 (15.0 %) · C = 1 120 (5.0 %). Los 10 mayores: 49.9 %.
+- 528 proveedores (38 %) con una sola OC.
+- Gasto por año de factura: 2015 S/ 44.5 M · 2016 S/ 93.5 M · 2017 S/ 137.3 M (×3.1). Por semestre: 20.1 · 24.4 · 35.2 · 58.3 · 53.6 · 83.7 M.
+- Categorías: Infraestructura y obras 57.4 % · Equipamiento y mobiliario 7.5 % · Servicios generales 6.9 %.
+- 55 compradores; los 5 mayores manejan el 73.4 %.
+- 19 proveedores clase A con un solo comprador que maneja ≥ 90 % de su gasto (S/ 35.9 M): señal para el Hilo 4.
+- 85 sedes: SEDE CENTRAL 10.7 %; las 5 primeras 24.3 %.
+- 22 de 59 subcategorías gestionables con HHI > 2 500 (16.1 % del gasto): insumo para Kraljic. Umbral provisional, a verificar en el Hilo 5.
+
+Pruebas: 32 pytest (14 Hilo 1 + 11 Hilo 2 + 7 Hilo 3), todas pasan.
+Para los Hilos 4, 5 y 7: tablas en `tablas/*.parquet`; Kraljic usa `concentracion_subcategoria` y excluye `excluir_de_kraljic`.
