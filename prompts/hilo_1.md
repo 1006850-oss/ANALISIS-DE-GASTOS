@@ -4,11 +4,11 @@ Trabajo en el repositorio `analisis-de-gastos`. Lee `PLAN.md` y `docs/bitacora.m
 Soy ingeniero industrial, trabajo en educación (colegios) y enseño dirección de proyectos. Construyo un análisis de gastos de compras que se repetirá cada semestre sobre un histórico de 103 050 registros (2015–2017, ~17 000 por semestre) (órdenes de compra y facturas del ERP). Adjunto la muestra de 28 filas y el extracto real "DATA TOTAL SOLO.xlsx" (13.6 MB; también está en la carpeta de Google Drive indicada en `config/parametros.yaml`). El extracto ya fue perfilado: lee `docs/perfil_extracto_real.md` antes de empezar y verifica sus cifras. Respóndeme en lenguaje sencillo y verifica todo sobre los datos antes de afirmarlo.
 
 ## Paso 0 – Verifica que el Hilo 0 esté cerrado
-Antes de programar, confirma que existen `docs/diccionario_datos.md`, `docs/reglas_negocio.md` y `config/parametros.yaml`. Si faltan o tienen puntos abiertos en `docs/pendientes.md` que afecten la limpieza (por ejemplo, qué estados cuentan como gasto o cómo se define el semestre), DETENTE, dime cuáles faltan y hazme solo esas preguntas. Los pendientes #7, #8, #10, #11 y #12 ya son conocidos y no bloquean este hilo. El pendiente #9 (nivel de detalle de la fila y monto de la OC) **es lo primero que se resuelve en este hilo**, junto conmigo.
+Antes de programar, confirma que existen `docs/diccionario_datos.md`, `docs/reglas_negocio.md` y `config/parametros.yaml`. Si faltan o tienen puntos abiertos en `docs/pendientes.md` que afecten la limpieza (por ejemplo, qué estados cuentan como gasto o cómo se define el semestre), DETENTE, dime cuáles faltan y hazme solo esas preguntas. Los pendientes #7 y #8 ya son conocidos y no bloquean este hilo. El pendiente #9 (monto total de la OC) **es lo primero que se resuelve en este hilo**, junto conmigo.
 
 ## Paso 0.5 – Resolver el nivel de detalle (pendiente #9)
-En la muestra, "Monto MN" era el total de la OC repetido en cada factura. En la data real cambia dentro de la OC en 8 039 OC. Analiza la data y proponme, con ejemplos concretos (sin nombres de personas):
-1. Qué representa una fila (¿línea de OC × factura?).
+Ya confirmé que **cada fila es una línea de la OC**. En la muestra, "Monto MN" era el total de la OC repetido en cada factura; en la data real cambia dentro de la OC en 8 039 OC (y se repite en otras 2 199). Analiza la data y proponme, con ejemplos concretos (sin nombres de personas):
+1. Cuándo "Monto MN" es monto de línea y cuándo es el total de la OC repetido, y cómo detectarlo.
 2. Cómo calcular el gasto sin doble conteo (hipótesis: suma de "Monto facturado" por fila = S/ 283 013 851.95) y por qué el 21 % de las OC no cuadra con "Monto MN".
 3. Cómo obtener el monto total de la OC para asignar el nivel de aprobación.
 No sigas al Paso 1 hasta que yo confirme la regla.
@@ -39,7 +39,8 @@ Aplica primero `mapeo_columnas` de `config/parametros.yaml` (encabezado vacío �
 - 19 filas sin factura (monto 0) → OC sin facturar.
 - "Empleado" y "Supervisor" traen nombres reales de personas → nunca enviarlos al LLM; en los reportes del repositorio usar códigos.
 - "Periodo Factura" viene como texto en español (`may 2017`, `ago 2015`, `dic 2016`) → convertir a fecha.
-- "Nota" (texto libre) se conserva limpia para la taxonomía. "Concepto" se conserva pero no se usa hasta resolver el pendiente #11.
+- "Nota" (texto libre) y "Concepto" se conservan limpios: son apoyo para la taxonomía del Hilo 2.
+- El alcance es 2015–2017: las facturas con periodo 2014 o 2018 de OC de ese rango se conservan.
 - "Monto MN" es el monto total de la OC y se repite en cada factura → NUNCA sumarlo por fila.
 
 Columnas que debe agregar el script:

@@ -2,7 +2,7 @@
 
 Versión 2026-09-25 (Hilo 0). Basado en la muestra de 28 filas (anonimizada/mezclada, según el usuario) y en las respuestas del usuario.
 
-Nivel de detalle: en la muestra parecía **una fila = una factura de una OC**. En la data real parece **una fila = una línea de OC × factura** (pendiente #9).
+Nivel de detalle: **una fila = una línea de la OC** con su factura (confirmado por el usuario). Una OC puede tener varias líneas y varias facturas.
 Formato: xlsx. Extracto real 2015–2017: 103 050 filas (~17 000 por semestre).
 
 **Nombres de columnas en la data real** (se estandarizan con `config/parametros.yaml > mapeo_columnas`):
@@ -34,10 +34,10 @@ Perfil completo del extracto real: `docs/perfil_extracto_real.md`.
 | 16 | Periodo Factura | texto | Sí | Mes de la factura (`may 2017`) | **Semestre del gasto** | Meses en español abreviado |
 | 17 | Estado Factura | texto | Sí | Estado de pago | Informativo | Solo "Pagado por completo" |
 | 18 | COMPRADOR | texto | Sí | Comprador que emite la OC | Cruces | 4 compradores (A–D) |
-| 19 | SUPERVISOR | texto | Sí | **Aprobador de la OC** | Control interno | 1 solo supervisor (F) |
+| 19 | SUPERVISOR (real: "Supervisor") | texto | Sí | **Aprobador de la OC** | Control interno | Real: 61 personas; igual al comprador en el 94 % de las OC |
 | 20 | Articulo | texto | Sí | **Categoría de compra** (según el usuario) | Nivel 1 de la taxonomía | 10 valores; mezcla mayúsculas y prefijos ("Ventas :", "VENTAS :") |
 | 21 | Descripcion | texto | Sí | Descripción de la OC | Subcategoría / producto (Hilo 2) | `_x000D_` en 3 filas; espacios al inicio |
-| 22 | Concepto | texto | No | Sin valor analítico (según el usuario) | Se ignora (revisar: pendiente #11) | Real: 232 valores, 2 342 vacíos |
+| 22 | Concepto | texto | No | Tipo de gasto | **Apoyo a la taxonomía** (Hilo 2) | Real: 232 valores, 2 342 vacíos. En la muestra parecía sin valor |
 | 23 | Departamento | texto | Sí | Área solicitante | Filtro | Solo "CONST" |
 | 24 | Clase | texto | No | **Glosa de palabras clave** que se coloca en la descripción de la OC | Etiqueta auxiliar | Vacía en 7 filas; trae años (`Ampliaciones 2018`) que no coinciden con el año de la OC |
 | 25 | ID Interno OC | entero | Sí | Identificador interno del ERP | Llave técnica | 1 a 1 con N° de OC |

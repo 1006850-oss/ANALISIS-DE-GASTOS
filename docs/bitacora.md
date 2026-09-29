@@ -41,3 +41,9 @@ Para el Hilo 1: extracto real (xlsx), ruta de Google Drive, pendiente #1 (estado
 - Hay OC en dólares; "Monto facturado" ya viene en soles.
 - "Empleado" = "Supervisor" en el 94 % de las OC (pendiente #10).
 - Nuevos pendientes: #9 a #12.
+
+### 2026-09-29 – Respuestas a pendientes #9 a #12
+- #9: cada fila es una línea de la OC. El Hilo 1 deriva la regla del monto total de la OC.
+- #10: "Supervisor" es quien aprueba → autoaprobación en el 94 % de las OC (hallazgo para el Hilo 4).
+- #11: "Concepto" se usa como apoyo a la taxonomía.
+- #12: no hay data posterior a 2017; el proyecto trabaja con 2015–2017.

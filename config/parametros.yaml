@@ -72,7 +72,7 @@ mapeo_columnas:
 columnas_ignoradas:
   # Campos vacíos o sin valor analítico (confirmado por el usuario).
   - "Procura"   # solo existe en la muestra
-  # "Concepto": en la muestra parecía vacío; en la data real tiene 232 valores. Pendiente #11.
+  # "Concepto" SÍ se usa (apoyo a la taxonomía, decisión del 2026-09-29).
 
 rutas:
   # Carpeta de Google Drive "analisis de gastos" (propietario: el usuario).
@@ -91,6 +91,7 @@ rutas:
 volumen:
   # Referencia para pruebas de rendimiento.
   # Extracto real 2015–2017: 103 050 filas, ~17 000 por semestre.
+  # Es la única data del proyecto: no hay data posterior a 2017 (decisión del usuario).
   registros_por_semestre_aprox: 17000
   registros_extracto_historico: 103050
   formato_entrada: "xlsx"

@@ -2,9 +2,13 @@
 
 Versión 2026-09-25 (Hilo 0). Los valores numéricos viven en `config/parametros.yaml`.
 
+## 0. Nivel de detalle
+- **Cada fila es una línea de la OC** (confirmado por el usuario, 2026-09-29), combinada con la factura que la cubre.
+- Una OC puede tener varias líneas y varias facturas.
+
 ## 1. Gasto
 - **Gasto = suma de "Monto facturado"** por fila, en soles.
-- "Monto MN" es el monto de la OC y se repite en cada factura. Solo se usa contando **una vez por OC** (`es_primera_linea_oc = 1`).
+- Muestra: "Monto MN" era el monto de la OC repetido en cada factura. **Data real: "Monto MN" suele ser el monto de la línea.** La regla para obtener el monto total de la OC la define el Hilo 1 con la data (pendiente #9).
 - Control: en la muestra, gasto = S/ 2 454 438.56; suma ingenua de "Monto MN" = S/ 5 864 650.11 (doble conteo).
 - Cuenta como gasto **toda factura registrada**, sin importar su estado de pago. El estado se conserva para el análisis del ciclo OC → factura.
 - "Estado de OC" = "Factura pendiente" significa **factura registrada pero no pagada** (confirmado por el usuario). Cuenta como gasto y se marca como pendiente de pago.
@@ -29,7 +33,7 @@ En la muestra: 11 OC en nivel 1, 10 en nivel 2, 2 en nivel 3.
 
 El límite superior de cada nivel es inclusivo (confirmado: S/ 35 000 exactos = nivel 1).
 
-**Supervisor:** el campo "SUPERVISOR" es el **aprobador de la OC** (confirmado por el usuario). La exportación trae un solo aprobador por OC, aunque la política exige varios desde el nivel 2. Por eso la data no permite verificar la cadena completa de aprobación; el Hilo 4 reportará las OC de nivel ≥ 2 y la concentración de aprobaciones por supervisor.
+**Supervisor:** el campo "SUPERVISOR" (en la data real, "Supervisor") es el **aprobador de la OC** (confirmado por el usuario). En la data real, el comprador ("Empleado") y el aprobador son la misma persona en el 94 % de las OC: el Hilo 4 lo reporta como **autoaprobación** (falta de segregación de funciones). La exportación trae un solo aprobador por OC, aunque la política exige varios desde el nivel 2. Por eso la data no permite verificar la cadena completa de aprobación; el Hilo 4 reportará las OC de nivel ≥ 2 y la concentración de aprobaciones por supervisor.
 
 ## 4. Compras fraccionadas
 - Grupo: OC del **mismo proveedor (RUC)** con fecha de OC dentro de **60 días**.
@@ -42,15 +46,20 @@ El límite superior de cada nivel es inclusivo (confirmado: S/ 35 000 exactos = 
 - A: hasta 80 % del gasto acumulado. B: hasta 95 %. C: el resto.
 
 ## 6. Taxonomía
-- Nivel 1 (categoría) = **"Articulo"** normalizado (es la categoría de compra del ERP).
-- Niveles 2 y 3 (subcategoría, producto): se construyen en el Hilo 2 a partir de "Descripcion" (y "Clase" como apoyo).
-- "Concepto" y "Procura" se ignoran.
+- Nivel 1 (categoría) = **"Articulo"** normalizado (es la categoría de compra del ERP; 414 valores en la data real).
+- Niveles 2 y 3 (subcategoría, producto): se construyen en el Hilo 2 a partir de "Descripcion", con apoyo de **"Concepto"** (232 valores), **"Nota"** y "Clase".
+- "Procura" solo existe en la muestra y se ignora.
 
 ## 7. Kraljic (criterios base, se detallan en el Hilo 5)
 - **Impacto financiero**: gasto y % del gasto total de la categoría (sale de la data).
 - **Riesgo de suministro**: puntaje 1–5 de expertos en: N° de proveedores alternativos, criticidad para el colegio, complejidad técnica y tiempo de reemplazo. Aproximaciones desde la data: N° de proveedores por categoría e índice HHI.
 - Cuadrantes: estratégico, apalancamiento, cuello de botella, no crítico.
 
-## 8. Confidencialidad
+## 8. Alcance temporal
+- El proyecto trabaja con el histórico **2015–2017** (103 050 filas). No se considera data posterior.
+- Las facturas con periodo 2014 o 2018 que pertenecen a OC de 2015–2017 se conservan.
+
+## 9. Confidencialidad
 - La data real vive en la carpeta de Google Drive "analisis de gastos" (id `1mZsi-I-oM9YzQbtjmVRzPI7iB3LG_pXm`), con subcarpetas `entrada/`, `maestro/`, `historico/`, `salida/`. No en este repositorio.
 - Los scripts procesan la data en el entorno del usuario. Al LLM solo se le envían descripciones únicas, sin RUC ni montos.
+- "Empleado" y "Supervisor" son nombres reales de personas: nunca se envían al LLM y en los reportes del repositorio se usan códigos.
