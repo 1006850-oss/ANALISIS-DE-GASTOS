@@ -53,3 +53,27 @@ Para el Hilo 1: extracto real (xlsx), ruta de Google Drive, pendiente #1 (estado
 - #8: si los estados se contradicen, manda "Estado Factura".
 - #9: se resuelve en el Hilo 1 (acordado).
 - Único pendiente abierto: #9.
+
+## Hilo 1 – Carga, limpieza y validación – 2026-09-29 (cerrado)
+Se desarrolló en el mismo hilo de planificación (el usuario pegó una versión anterior del prompt; se aplicaron las decisiones vigentes del repositorio).
+
+Decisiones aprobadas por el usuario:
+- **Monto total de la OC** (pendiente #9): por cada factura de la OC se suma "Monto MN" de sus filas y se toma la suma más alta. Cubre los 3 patrones del ERP (línea pagada con varias facturas, líneas iguales en una factura, total repetido).
+- Nueva bandera `flag_facturado_excede_oc` (facturado > monto de OC + 5 %).
+- Clasificación de validaciones: BLOQUEAN 1 (columnas), 2a (montos/fecha/N° de OC ilegibles), 3a (sin proveedor/OC/fecha), 5b (moneda extranjera sin monto en soles) y 8 (control de totales). El resto ADVIERTE; los duplicados se marcan, no se borran.
+
+Cifras oficiales del extracto real (2015–2017):
+- 103 050 filas · 23 009 OC · 1 401 proveedores (por RUC; 2 RUC aparecían con dos nombres) · 55 compradores.
+- **Gasto (suma de "Monto facturado") = S/ 283 013 851.95.** Control antes/después: diferencia S/ 0.00.
+- Monto total de OC (regla aprobada) = S/ 279 870 386.72. Referencia no válida: suma de "Monto MN" por fila = S/ 712 793 100.53.
+- OC por nivel de aprobación: 1 = 21 702 · 2 = 1 159 · 3 = 123 · 4 = 12 · 5 = 13 (OC en dólares evaluadas con límites en dólares).
+- Advertencias: 19 filas sin factura; 4 653 sin descripción; 291 filas idénticas; 7 filas con factura en más de una OC; 16 804 filas en dólares; 1 795 estados contradictorios; **1 166 OC con facturado > monto de OC + 5 % (S/ 15.9 M)**.
+- Gasto por semestre (según "Periodo Factura"): 2015-S1 S/ 20.1 M · 2015-S2 S/ 24.4 M · 2016-S1 S/ 35.2 M · 2016-S2 S/ 58.3 M · 2017-S1 S/ 53.6 M · 2017-S2 S/ 83.7 M · 2018-S1 S/ 7.5 M (facturas de OC de 2017) · 2014 S/ 0.09 M.
+
+Rendimiento (entorno en la nube; una laptop normal debería estar en el mismo orden):
+- Extracto real xlsx (103 050 filas): ~10 s en total (lectura 4 s, proceso 3 s).
+- Sintético 250 000 filas: csv ~11 s; xlsx ~22 s (lectura 12 s, proceso 6 s).
+
+Pruebas: 14 pruebas con pytest, todas pasan (incluye muestra y extracto real cuando están en `data/`; si no están, esas 2 se saltan).
+
+Para el Hilo 2: usar `tabla_limpia.parquet`; columnas de texto limpias `articulo_normalizado` (410 valores), `descripcion`, `concepto`, `nota`, `clase_glosa`.

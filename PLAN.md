@@ -28,7 +28,7 @@ aquí su entrega.
 | Hilo | Bloque | Depende de | Entrega principal |
 |---|---|---|---|
 | 0 ✅ | Fundaciones: decisiones, estructura, reglas | – | Diccionario de datos, reglas de negocio, parámetros, estructura de carpetas |
-| 1 | Carga, limpieza y validación | 0 | `limpiar_validar.py` + tabla limpia + reporte de calidad |
+| 1 ✅ | Carga, limpieza y validación | 0 | `limpiar_validar.py` + tabla limpia + reporte de calidad |
 | 2 | Taxonomía y maestro de categorías | 1 | `clasificar.py` + `maestro_categorias.xlsx` validado |
 | 3 | Análisis descriptivo (Pareto, frecuencias, montos, cruces) | 1, 2 | `analizar.py` |
 | 4 | Control y alertas (fraccionamiento, duplicados, ciclo OC→factura, adicionales, giro) | 1 | `alertas.py` |

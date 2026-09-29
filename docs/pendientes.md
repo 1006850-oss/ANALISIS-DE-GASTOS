@@ -3,7 +3,7 @@
 ## Abiertos
 | # | Pendiente | Quién responde | Afecta a |
 |---|---|---|---|
-| 9 | Cada fila es una línea de la OC (confirmado). El usuario acordó que el **Hilo 1** derive con la data la regla del monto total de la OC y explique el 21 % de OC donde lo facturado no cuadra con "Monto MN"; el usuario la confirma allí. | Hilo 1 | Hilos 1 y 4 |
+| – | Ninguno abierto. | | |
 
 ## Resueltos (2026-09-25)
 | # | Pendiente | Respuesta |
@@ -13,6 +13,7 @@
 | 3 | Montos exactos en el límite | Pertenecen al nivel inferior (límite inclusivo). |
 | 5 | Ruta de Google Drive | Carpeta "analisis de gastos", id `1mZsi-I-oM9YzQbtjmVRzPI7iB3LG_pXm`. Acceso verificado. |
 | 6 | Rol del supervisor | Es el aprobador de la OC. (Ver pendiente #10.) |
+| 9 | Monto total de la OC | Aprobado en el Hilo 1: suma más alta de "Monto MN" por factura. OC con facturado > monto + 5 % se marcan para el Hilo 4. |
 | 7 | Subcarpetas en Drive | Creadas el 2026-09-29: `entrada/`, `maestro/`, `historico/`, `salida/` (ids en `config/parametros.yaml`). |
 | 8 | Contradicción de estados | Manda "Estado Factura". Las 1 795 filas en conflicto se consideran pagadas. |
 | 10 | ¿"Supervisor" aprueba? | Sí, es quien aprueba. "Empleado" = "Supervisor" en el 94 % de las OC es un hallazgo de control (autoaprobación) para el Hilo 4. |

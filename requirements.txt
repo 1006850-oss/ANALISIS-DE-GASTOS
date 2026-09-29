@@ -1,0 +1,7 @@
+pandas>=2.2
+numpy>=1.26
+openpyxl>=3.1
+python-calamine>=0.2   # lectura rápida de xlsx (opcional; si falta se usa openpyxl)
+pyarrow>=15            # Parquet
+pyyaml>=6.0
+pytest>=8.0
