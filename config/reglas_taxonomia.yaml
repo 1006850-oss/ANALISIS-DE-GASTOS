@@ -144,7 +144,9 @@ articulos:
 # y si no, la subcategoría.
 productos:
   Infraestructura y obras:
-    - {patron: "ADICIONAL", producto: "Adicionales de obra"}
+    # "Adicional" en descripción, concepto o nota, EXCEPTO "aula(s) adicional(es)", que es alcance
+    # original y no un adicional de obra (ajuste aprobado en el Hilo 4).
+    - {patron: "(?<!AULAS )(?<!AULA )ADICIONAL", producto: "Adicionales de obra"}
     - {patron: "SUPERVIS", producto: "Supervisión de obra"}
     - {patron: "EXPEDIENTE|PROYECTO ARQ|DISENO|ARQUITECT|INGENIERIA|ESTUDIO|TOPOGRAF|SUELOS", producto: "Expediente técnico y diseño"}
     - {patron: "LICENCIA|MUNICIPAL|PERMISO|INDECI|DEFENSA CIVIL", producto: "Licencias y permisos"}

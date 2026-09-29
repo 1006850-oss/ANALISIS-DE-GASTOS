@@ -1,0 +1,82 @@
+# Reglas y umbrales de las alertas de control (Hilo 4). Aprobados por el usuario el 2026-09-29.
+# Una alerta es una SEÑAL para revisar, no una conclusión.
+version: "2026-09-29"
+
+fraccionamiento:
+  # Se agrupan OC del mismo proveedor + misma sede + misma subcategoría.
+  agrupar_por: ["proveedor_id", "sede", "subcategoria"]
+  ventana_dias: 60
+  minimo_oc: 2
+  # Límites en soles: los de config/parametros.yaml > aprobacion_oc (hasta_pen).
+  # No se evalúan servicios recurrentes ni cuentas contables.
+  subcategorias_excluidas:
+    - "Telecomunicaciones"
+    - "Seguridad y vigilancia"
+    - "Limpieza"
+    - "Servicios públicos y agua"
+    - "Alquiler de inmuebles"
+    - "Mensajería, transporte y archivo"
+    - "Pasajes"
+    - "Viáticos y alojamiento"
+    - "Movilidad local y combustible"
+    - "Call center"
+    - "Software y licencias"
+  categorias_excluidas: ["Cuentas contables (no gestionables por Compras)"]
+  prioridad:
+    alta_si_dias_max: 7        # todas las OC del caso dentro de 7 días (o varias el mismo día)
+    media_si_mismo_comprador: true
+
+autoaprobacion:
+  nivel_minimo: 2              # el nivel 1 solo exige un aprobador: se reporta como estadística
+  prioridad_por_nivel: {2: "Baja", 3: "Media", 4: "Alta", 5: "Alta"}
+
+duplicados:
+  monto_minimo_factura: 1000
+  # Posible factura duplicada: mismo proveedor, monto, mes, sede y descripción; N° de factura distinto.
+  excluir_subcategorias_recurrentes: true   # usa la lista de fraccionamiento
+  prioridad:
+    factura_en_varias_oc: "Alta"
+    posible_factura_duplicada_misma_oc: "Alta"
+    posible_factura_duplicada: "Media"
+    fila_identica: "Baja"
+
+ciclo:
+  factura_antes_de_oc: "Alta"
+  meses_ciclo_largo: 6
+  ciclo_largo: "Media"
+  oc_sin_facturar: "Media"
+  pendiente_de_pago: "Baja"
+  facturado_excede_oc: "Media"
+
+adicionales:
+  # La detección está en config/reglas_taxonomia.yaml (producto "Adicionales de obra").
+  producto: "Adicionales de obra"
+  categoria: "Infraestructura y obras"
+  umbral_pct_sede: 20
+  gasto_minimo_sede: 500000
+  umbral_pct_proveedor: 10
+  gasto_minimo_proveedor: 100000
+
+giro:
+  gasto_minimo: 50000
+  umbral_segunda_familia: 0.20
+  familias:
+    "Infraestructura y obras": "Infraestructura física"
+    "Mantenimiento": "Infraestructura física"
+    "Equipamiento y mobiliario": "Infraestructura física"
+    "Inmuebles": "Infraestructura física"
+    "Tecnología": "Tecnología"
+    "Servicios generales de sede": "Servicios de sede"
+    "Marketing y admisión": "Marketing"
+    "Material educativo y programas académicos": "Académica"
+    "Capacitación": "Académica"
+    "Personal: bienestar y gestión humana": "Personal"
+    "Viajes y movilidad": "Viajes"
+    "Servicios profesionales": "Servicios profesionales"
+    "Suministros e impresiones": "Suministros"
+    "Seguros": "Seguros"
+
+concentracion_comprador:
+  # Reutiliza el análisis del Hilo 3 (umbral en parametros.yaml > analisis).
+  solo_clase: "A"
+  prioridad: "Media"

@@ -34,3 +34,12 @@ python scripts/analizar.py --tabla <tabla_clasificada.parquet> --salida <carpeta
 
 Salidas: `tablas/*.parquet` (una por análisis), `resultados_descriptivos.xlsx` (hoja "Control" + una hoja por análisis),
 `graficos/*.png` y `hallazgos.md`. Devuelve código 1 si alguna tabla no cuadra con el total.
+
+## Hilo 4 – `alertas.py`
+
+```bash
+python scripts/alertas.py --tabla <tabla_clasificada.parquet> --salida <carpeta>
+```
+
+Salidas: `alertas.xlsx` (Resumen + una hoja por alerta con columnas para la investigación), `tablas/*.parquet`,
+`hallazgos_control.md`. Reglas y umbrales en `config/reglas_alertas.yaml`.

@@ -118,3 +118,22 @@ Cifras oficiales (2015-S1 a 2017-S2; gasto analizado S/ 275 378 383.86):
 
 Pruebas: 32 pytest (14 Hilo 1 + 11 Hilo 2 + 7 Hilo 3), todas pasan.
 Para los Hilos 4, 5 y 7: tablas en `tablas/*.parquet`; Kraljic usa `concentracion_subcategoria` y excluye `excluir_de_kraljic`.
+
+## Hilo 4 – Control y alertas – 2026-09-29 (cerrado)
+Decisiones aprobadas por el usuario ("todo según la propuesta"):
+- Fraccionamiento: mismo proveedor + misma sede + misma subcategoría, 60 días, sin servicios recurrentes ni cuentas contables. La regla simple daba 7 550 ventanas.
+- Autoaprobación desde el nivel 2; duplicados en 3 tipos; factura anterior a la OC = prioridad alta; ciclo > 6 meses = media.
+- Adicionales: umbral 20 % por sede y 10 % por proveedor. **Detección ajustada:** "adicional" excepto "aula(s) adicional(es)" (cambia el producto en la taxonomía; Hilos 2 y 3 regenerados).
+- Giro: familias de categorías, umbral 20 %.
+
+Resultados (OC 2015–2017):
+- Fraccionamiento: 210 casos, 77 proveedores, S/ 21.6 M; 127 de prioridad alta. Límite superado: S/ 35 000 (190), S/ 250 000 (15), S/ 1 000 000 (5).
+- Autoaprobación nivel ≥ 2: 1 209 OC, S/ 186.0 M; niveles 4–5: 25 de 25 OC.
+- Duplicados: 312 casos (61 alta): 120 OC con filas idénticas, 1 factura en 2 OC, 60 posibles facturas duplicadas en la misma OC, 131 en OC distintas.
+- Ciclo: 95 OC con factura anterior a la OC (S/ 1.6 M); 438 OC con ciclo > 6 meses; 10 OC sin facturar; 1 166 OC con facturado > monto + 5 %; 59 OC con facturas pendientes de pago.
+- Adicionales de obra: S/ 15.2 M (9.3 % del gasto en obras); 6 sedes ≥ 20 % (Surco 5 – Atenea 61.7 %) y 11 proveedores ≥ 10 %.
+- Giro: 38 proveedores. Concentración comprador–proveedor: 19 proveedores A (S/ 35.9 M).
+- Muestra: el caso del 03/11/2015 (Chimbote) no cumple la regla: 3 proveedores distintos y cada OC ya es de nivel 2.
+
+Pruebas: 39 pytest (7 nuevas del Hilo 4), todas pasan.
+Para el Hilo 7: tablas en `tablas/*.parquet` y `alertas.xlsx`.
