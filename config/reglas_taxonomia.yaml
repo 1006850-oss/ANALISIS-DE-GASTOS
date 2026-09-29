@@ -1,0 +1,182 @@
+# Reglas de la taxonomía de compras (Hilo 2). Editable sin tocar el código.
+# Versión: 2026-09-29
+#
+# Niveles:  categoría (15)  >  subcategoría  >  producto
+# - Niveles 1 y 2 se asignan por ARTÍCULO ("articulo_normalizado").
+# - Nivel 3 (producto) se asigna por palabras clave en descripción + concepto + nota.
+#
+# Cómo se aplica:
+#   1. Si el artículo está en el maestro validado (Drive: maestro/maestro_categorias.xlsx), manda el maestro.
+#   2. Si no, se recorren las reglas de "articulos" EN ORDEN y gana la primera que coincide.
+#      Los patrones son expresiones regulares sobre el texto en MAYÚSCULAS y SIN TILDES.
+#   3. Si ninguna coincide: categoría "Sin clasificar" (se lista para validar).
+# "confianza": alta = coincidencia evidente; media = propuesta que conviene revisar.
+
+version: "2026-09-29"
+
+categorias:
+  - "Infraestructura y obras"
+  - "Mantenimiento"
+  - "Equipamiento y mobiliario"
+  - "Tecnología"
+  - "Servicios generales de sede"
+  - "Inmuebles"
+  - "Marketing y admisión"
+  - "Material educativo y programas académicos"
+  - "Capacitación"
+  - "Personal: bienestar y gestión humana"
+  - "Viajes y movilidad"
+  - "Servicios profesionales"
+  - "Suministros e impresiones"
+  - "Seguros"
+  - "Cuentas contables (no gestionables por Compras)"
+
+# Categorías que se excluyen de la matriz de Kraljic (siguen en el gasto total).
+excluir_de_kraljic:
+  - Cuentas contables (no gestionables por Compras)
+
+# Construcción: la subcategoría es el tipo de intervención, tomado de "clase_glosa".
+construccion:
+  articulos: ["^CONSTRUCCION$"]
+  subcategoria_por_clase:
+    "OBRAS NUEVAS": "Obra nueva"
+    "SEDES EN CONSTRUCCION": "Obra nueva"
+    "AMPLIACIONES": "Ampliación"
+    "MANTENIMIENTO PREVENTIVO": "Mejoras y mantenimiento mayor"
+    "INVERSION": "Mejoras y mantenimiento mayor"
+  subcategoria_sin_clase: "Obra sin tipo de intervención"
+
+articulos:
+  # ---------------- Cuentas contables (primero, para que no caigan en otra categoría)
+  - {patron: "POR DEVENGAR|CONTRATADOS POR ANTICIPADO|ANICIPADOS|ANTICIPADOS DE SEGUROS|ANTICIPO A PROVEEDOR|DEPOSITOS EN GARANTIA|SERVICIOS PROVISIONADOS|COSTO AMORTIZADO", categoria: "Cuentas contables (no gestionables por Compras)", subcategoria: "Anticipos, diferidos y provisiones", confianza: alta}
+  - {patron: "\\bEPS\\b", categoria: "Cuentas contables (no gestionables por Compras)", subcategoria: "Aportes EPS", confianza: alta}
+  - {patron: "INTERESES|OTROS GASTOS FINANCIEROS", categoria: "Cuentas contables (no gestionables por Compras)", subcategoria: "Gastos financieros", confianza: alta}
+  - {patron: "CONTRIBUCION SMV|DERECHO DE COTIZACION|ARBITRIOS|INDECOPI|MINTRA", categoria: "Cuentas contables (no gestionables por Compras)", subcategoria: "Tributos, tasas y contribuciones", confianza: alta}
+  - {patron: "OTRAS CUENTAS POR PAGAR|INVENTARIO ACTIVO FIJO|GASTOS REPARABLES|OTROS ACTIVOS INTANGIBLES|DONACION|RETRIBUCIONES AL DIRECTORIO|ADMISION : BONIFICACION", categoria: "Cuentas contables (no gestionables por Compras)", subcategoria: "Otros ajustes contables", confianza: media}
+
+  # ---------------- Viajes y movilidad (antes que Marketing/Capacitación, que tienen viajes con prefijo)
+  - {patron: "PASAJE", categoria: "Viajes y movilidad", subcategoria: "Pasajes", confianza: alta}
+  - {patron: "VIATICO|ALOJAMIENTO|VIAJES|VISITA BID", categoria: "Viajes y movilidad", subcategoria: "Viáticos y alojamiento", confianza: alta}
+  - {patron: "MOVILIDAD|COMBUSTIBLE|TRASLADO", categoria: "Viajes y movilidad", subcategoria: "Movilidad local y combustible", confianza: alta}
+
+  # ---------------- Infraestructura y obras
+  - {patron: "^CONSTRUCCION$", categoria: "Infraestructura y obras", subcategoria: "(según clase)", confianza: alta}
+  - {patron: "MEJORAS INFRAESTRUCTURA|MEJORAS Y REPOSICION|^MEJORAS$|NECESIDADES Y MEJORAS|PLAN DE MEJORAS", categoria: "Infraestructura y obras", subcategoria: "Mejoras y mantenimiento mayor", confianza: media}
+  - {patron: "MATERIAL CONCRETO", categoria: "Infraestructura y obras", subcategoria: "Materiales de construcción", confianza: alta}
+  - {patron: "INDECI|PLAN DE MANEJO AMBIENTAL", categoria: "Infraestructura y obras", subcategoria: "Licencias, permisos y estudios", confianza: media}
+
+  # ---------------- Tecnología
+  - {patron: "HABILITACION DE PLANTA EXTERNA|INTERNET|TELEFONIA|CELULAR|EQUIPO DE COMUNICACION", categoria: "Tecnología", subcategoria: "Telecomunicaciones", confianza: alta}
+  - {patron: "LICENCIA|SOFTWARE|ALQUILER SIST", categoria: "Tecnología", subcategoria: "Software y licencias", confianza: alta}
+  - {patron: "EQUIPOS DE COMPUTO|LAPTOP|ALQUILER PC", categoria: "Tecnología", subcategoria: "Equipos de cómputo", confianza: alta}
+  - {patron: "SISTEMAS INFORMATICOS|PLATAFORMA|SOPORTE Y OBSERVACIONES|ASESORIA SISTEMAS|OFISIS|XTEND|MANT\\. Y REP\\. EQ INFORMATICOS|EVALUACION DESEMPENO 360", categoria: "Tecnología", subcategoria: "Desarrollo y soporte de sistemas", confianza: alta}
+
+  # ---------------- Mantenimiento
+  - {patron: "MANTENIMIENTO.*(?:INSTALACIONES|INMUEBLES|CORRECTIVO|VISUAL)|MANTENIMIENTO CORRECTIVO", categoria: "Mantenimiento", subcategoria: "Mantenimiento de instalaciones", confianza: alta}
+  - {patron: "MANTENIMIENTO.*EQUIPOS", categoria: "Mantenimiento", subcategoria: "Mantenimiento de equipos y mobiliario", confianza: alta}
+
+  # ---------------- Servicios generales de sede
+  - {patron: "LIMPIEZA", categoria: "Servicios generales de sede", subcategoria: "Limpieza", confianza: alta}
+  - {patron: "SEGURIDAD ELECTRONICA|MONITOREO DE INTRUSION|^SEGURIDAD|VIGILANCIA$|^VIGILANCIA", categoria: "Servicios generales de sede", subcategoria: "Seguridad y vigilancia", confianza: alta}
+  - {patron: "SERVICIOS PUBLICOS|ENERGIA|AGUA", categoria: "Servicios generales de sede", subcategoria: "Servicios públicos y agua", confianza: alta}
+  - {patron: "COURIER|TRANSPORTE DE CARGA|CUSTODIA DE DOCUMENTOS", categoria: "Servicios generales de sede", subcategoria: "Mensajería, transporte y archivo", confianza: alta}
+  - {patron: "AMBULANCIA|CHARLAS DE SEGURIDAD|BOTIQUIN|CHEQUEO MEDICO", categoria: "Servicios generales de sede", subcategoria: "Salud y seguridad en el trabajo", confianza: alta}
+  - {patron: "^ALIMENTACION|REFRIGERIOS|COFFEE BREAK", categoria: "Servicios generales de sede", subcategoria: "Alimentación y atenciones", confianza: alta}
+  - {patron: "^EVENTOS|XXEVENTOS|GASTOS DE REPRESENTACION|COMUNICACION A PADRES", categoria: "Servicios generales de sede", subcategoria: "Eventos y representación", confianza: media}
+
+  # ---------------- Inmuebles
+  - {patron: "ALQUILER DE LOCALES|^ALQUILERES$|ALQUILER DE ESTACIONAMIENTOS", categoria: "Inmuebles", subcategoria: "Alquiler de inmuebles", confianza: alta}
+  - {patron: "^TERRENOS$", categoria: "Inmuebles", subcategoria: "Compra de terrenos", confianza: alta}
+  - {patron: "FIDEICOMISO|TASACIONES", categoria: "Inmuebles", subcategoria: "Fideicomiso y tasaciones", confianza: alta}
+
+  # ---------------- Seguros
+  - {patron: "SEGURO", categoria: "Seguros", subcategoria: "Seguros", confianza: alta}
+
+  # ---------------- Marketing y admisión
+  - {patron: "CALL CENTER", categoria: "Marketing y admisión", subcategoria: "Call center", confianza: alta}
+  - {patron: "PLAN DIGITAL|\\bSEM\\b", categoria: "Marketing y admisión", subcategoria: "Marketing digital", confianza: alta}
+  - {patron: "COMERCIAL TV|SPOT|PLAN DE MEDIOS|TV PROVINCIAS|CINES|PRENSA|MATERIAL AUDIOVISUAL|TESTIMONIALES", categoria: "Marketing y admisión", subcategoria: "Publicidad en medios", confianza: alta}
+  - {patron: "OUTDOORS|PANELES|MODULOS|SENALETICA", categoria: "Marketing y admisión", subcategoria: "Publicidad exterior y módulos", confianza: alta}
+  - {patron: "INVESTIGACION DE MERCADO|QUANTICO", categoria: "Marketing y admisión", subcategoria: "Investigación de mercado", confianza: alta}
+  - {patron: "AGENCIA GRAFICA|(?:VENTAS|BRANDING|LEALTAD).*ASESORIA TERCEROS|^ASESORIA TERCEROS|AGENCIA DE PRENSA", categoria: "Marketing y admisión", subcategoria: "Agencias y diseño", confianza: media}
+  - {patron: "ACTIVACIONES|CHARLA MAGISTRAL|LOCAL CHARLAS|INCENTIVOS|OBSEQUIOS|MAMAS EMBAJADORAS|PROMOTORAS|AUSPICIO|MERCHANDISING", categoria: "Marketing y admisión", subcategoria: "Activaciones, eventos y merchandising", confianza: alta}
+  - {patron: "MATERIALES ADQ\\. ALUMNOS|MATERIAL IMPRESO ADMISION|EXAMEN DE ADMISION|ADMISION|ADQUISICION DE ALUMNOS|PRE MATRICULA|MATERIALES BRANDING|MATERIALES LEALTAD|KIT DE RENOVACION", categoria: "Marketing y admisión", subcategoria: "Materiales de admisión y captación", confianza: alta}
+  - {patron: "^VENTAS|^BRANDING|^LEALTAD|PUBLICIDAD", categoria: "Marketing y admisión", subcategoria: "Otros de marketing", confianza: media}
+
+  # ---------------- Capacitación (antes que Material educativo por "CAPACITACION")
+  - {patron: "SESIONES TRC|PROFESORES|DIRECTORES|COACHES|\\bTOT\\b|\\bIPNM\\b|UCIC|MONITORES", categoria: "Capacitación", subcategoria: "Capacitación docente", confianza: alta}
+  - {patron: "BACK OFFICE|INDUCCION", categoria: "Capacitación", subcategoria: "Capacitación administrativa", confianza: alta}
+  - {patron: "CAPACITACION|CURSOS DE ACTUALIZACION", categoria: "Capacitación", subcategoria: "Cursos y materiales de capacitación", confianza: alta}
+
+  # ---------------- Material educativo y programas académicos
+  - {patron: "^SEA\\b", categoria: "Material educativo y programas académicos", subcategoria: "Programas SEA", confianza: alta}
+  - {patron: "PRUEBAS CENSALES|APLICADOR|CODIFICADORES|ANALISTA ESTADISTICO|RETROALIMENTACION AL MODELO|TUTORIA", categoria: "Material educativo y programas académicos", subcategoria: "Evaluación educativa", confianza: alta}
+  - {patron: "CONTENIDOS|TEACHER RESOU|STUDENT WORKCANVAS|AFICHES Y GUIAS|SOLO LEARNING|LAUNCH|REDISENO IP|INICIATIVAS", categoria: "Material educativo y programas académicos", subcategoria: "Contenidos y plataformas educativas", confianza: media}
+  - {patron: "MATERIAL PEDAGOGICO|MATERIAL EDUCATIVO|MATERIALES EDUCATIVOS|CIENCIAS|LABORATORIO|PROTOTYPING|MOCHILA|AFTERSCHOOL|CIRCUITO PSICOMOTRIZ", categoria: "Material educativo y programas académicos", subcategoria: "Material pedagógico y de laboratorio", confianza: alta}
+
+  # ---------------- Equipamiento y mobiliario
+  - {patron: "MUEBLES|SILLAS|AULAS", categoria: "Equipamiento y mobiliario", subcategoria: "Mobiliario", confianza: alta}
+  - {patron: "SONIDO|MUSICA|EDUCACION FISICA|TOPICO|CAMARAS", categoria: "Equipamiento y mobiliario", subcategoria: "Equipamiento especializado", confianza: alta}
+  - {patron: "VEHICULO", categoria: "Equipamiento y mobiliario", subcategoria: "Vehículos", confianza: alta}
+  - {patron: "REPOSICIONES Y ENSERES|ACTIVOS MENORES|TACHOS|HERRAMIENTAS|ALQUILER EQUIPOS|ALQUILERES DE EQUIPOS", categoria: "Equipamiento y mobiliario", subcategoria: "Enseres y equipos menores", confianza: media}
+  - {patron: "EQUIPAMIENTO|OTROS EQUIPOS", categoria: "Equipamiento y mobiliario", subcategoria: "Equipamiento general", confianza: alta}
+
+  # ---------------- Personal: bienestar y gestión humana
+  - {patron: "RECLUTAMIENTO|SELECCION|VERIFICACION DE ANTECEDENTES|REFERIDOS", categoria: "Personal: bienestar y gestión humana", subcategoria: "Reclutamiento y selección", confianza: alta}
+  - {patron: "EVALUACION DESEMPENO|ENCUESTA|CULTURA Y COMUNICACION|COMUNICACION INTERNA|KIT DE CLIMA|GESTION DE BENEFICIOS|DESARROLLO - EXPERTOS|COACHING", categoria: "Personal: bienestar y gestión humana", subcategoria: "Clima, evaluación y comunicación interna", confianza: media}
+  - {patron: "UNIFORMES|FOTOCHECK|KIT DE BIENVENIDA", categoria: "Personal: bienestar y gestión humana", subcategoria: "Uniformes y kits", confianza: alta}
+  - {patron: "AGASAJO|DIA DEL MAESTRO|BIENESTAR|CELEBRACION|DESAYUNOS|SOUVENIRS|CEREMONIA|INTEGRACION|ENTRADAS AL CINE", categoria: "Personal: bienestar y gestión humana", subcategoria: "Agasajos y bienestar", confianza: alta}
+
+  # ---------------- Servicios profesionales
+  - {patron: "ASESORIA LEGAL|NOTARIAL", categoria: "Servicios profesionales", subcategoria: "Legal y notarial", confianza: alta}
+  - {patron: "CONTABLE|AUDITORIA|PRECIOS DE TRANSFERENCIA", categoria: "Servicios profesionales", subcategoria: "Contable, tributaria y auditoría", confianza: alta}
+  - {patron: "CLASIFICADORAS|CLASIFICACION DE RIESGO|INFOCORP", categoria: "Servicios profesionales", subcategoria: "Clasificación de riesgo y centrales", confianza: alta}
+  - {patron: "ACREDITACION", categoria: "Servicios profesionales", subcategoria: "Acreditación", confianza: alta}
+  - {patron: "ASESORIA|CONSULTORIA|HONORARIOS|ACUERDO DE SERVICIO|SUSCRIPCIONES", categoria: "Servicios profesionales", subcategoria: "Consultoría y asesoría", confianza: alta}
+  - {patron: "OTROS SERVICIOS|OTRAS INICIATIVAS", categoria: "Servicios profesionales", subcategoria: "Otros servicios de terceros", confianza: media}
+
+  # ---------------- Suministros e impresiones
+  - {patron: "IMPRESION|IMPRESO|IMPRENTA|FOTOCOPIA|DISENOS CAPACITACION", categoria: "Suministros e impresiones", subcategoria: "Impresiones y fotocopias", confianza: alta}
+  - {patron: "SUMINISTROS|ECONOMATO|MATERIALES", categoria: "Suministros e impresiones", subcategoria: "Suministros y útiles", confianza: alta}
+
+# Nivel 3 – producto. Se busca en "descripcion + concepto + nota" (MAYÚSCULAS, SIN TILDES).
+# Por categoría, en orden; gana la primera. Si ninguna coincide: se usa el "concepto" (si existe),
+# y si no, la subcategoría.
+productos:
+  Infraestructura y obras:
+    - {patron: "ADICIONAL", producto: "Adicionales de obra"}
+    - {patron: "SUPERVIS", producto: "Supervisión de obra"}
+    - {patron: "EXPEDIENTE|PROYECTO ARQ|DISENO|ARQUITECT|INGENIERIA|ESTUDIO|TOPOGRAF|SUELOS", producto: "Expediente técnico y diseño"}
+    - {patron: "LICENCIA|MUNICIPAL|PERMISO|INDECI|DEFENSA CIVIL", producto: "Licencias y permisos"}
+    - {patron: "ELECTRIC|SANITAR|CABLE|CABLEADO|TABLERO|AIRE ACONDICIONADO|ASCENSOR|INSTALACION", producto: "Instalaciones y especialidades"}
+    - {patron: "PINTUR|PINTADO|PISO|ACABADO|CARPINTER|VIDRI|PUERTA|VENTANA|TOLDO|GRASS|MELAMIN|ALUMINIO|CIELO RASO|DRYWALL", producto: "Acabados y carpintería"}
+    - {patron: "DEMOLI|MOVIMIENTO DE TIERRA|EXCAVAC|ELIMINACION DE DESMONTE", producto: "Demolición y movimiento de tierras"}
+    - {patron: "CONCRETO|CEMENTO|FIERRO|LADRILLO|AGREGADO|MATERIAL", producto: "Materiales de construcción"}
+    - {patron: "OBRA|CONSTRUC|EDIFIC|AULA|PABELLON|AMPLIAC|CASCO|ESTRUCTUR|LOSA|CERCO|MURO", producto: "Obra civil"}
+  Mantenimiento:
+    - {patron: "AIRE ACONDICIONADO|ASCENSOR|GRUPO ELECTROGENO|BOMBA", producto: "Mantenimiento de equipos electromecánicos"}
+    - {patron: "FOTOCOPIADORA|IMPRESORA|COMPUTADORA|PROYECTOR|INFORMATIC", producto: "Mantenimiento de equipos informáticos y de oficina"}
+    - {patron: "PINTUR|PINTADO", producto: "Pintura"}
+    - {patron: "ELECTRIC", producto: "Mantenimiento eléctrico"}
+    - {patron: "SANITAR|GASFITER|DESAGUE|TANQUE|CISTERNA", producto: "Mantenimiento sanitario"}
+    - {patron: "FUMIGAC|DESRATIZ|DESINFECC", producto: "Fumigación y desinfección"}
+    - {patron: "JARDIN|GRASS|AREAS VERDES", producto: "Áreas verdes"}
+  Equipamiento y mobiliario:
+    - {patron: "SILLA|CARPETA|MESA|ESCRITORIO|PUPITRE", producto: "Sillas, carpetas y mesas"}
+    - {patron: "PIZARRA|ESTANTE|LOCKER|ARMARIO|CASILLERO|ARCHIVADOR", producto: "Pizarras y almacenamiento"}
+    - {patron: "PROYECTOR|ECRAN|PARLANTE|SONIDO|MICROFONO|AUDIO", producto: "Equipos audiovisuales"}
+    - {patron: "CAMARA|CCTV|ALARMA", producto: "Equipos de seguridad"}
+    - {patron: "COCINA|REFRIGERA|FRIGOBAR|MICROONDAS|DISPENSADOR", producto: "Electrodomésticos"}
+  Tecnología:
+    - {patron: "INTERNET|FIBRA|ENLACE|DATOS", producto: "Internet y enlaces de datos"}
+    - {patron: "CELULAR|MOVIL|RADIO|TELEFON", producto: "Telefonía"}
+    - {patron: "LAPTOP|COMPUTADORA|\\bPC\\b|DESKTOP|TABLET|IPAD", producto: "Computadoras y tablets"}
+    - {patron: "IMPRESORA", producto: "Impresoras"}
+    - {patron: "SERVIDOR|SWITCH|ROUTER|ACCESS POINT|RED ", producto: "Equipos de red y servidores"}
+    - {patron: "LICENCIA|SUSCRIPCION|OFFICE|MICROSOFT|GOOGLE|ANTIVIRUS", producto: "Licencias de software"}
+  Viajes y movilidad:
+    - {patron: "AERE|VUELO|AVION", producto: "Pasajes aéreos"}
+    - {patron: "TERRESTRE|BUS", producto: "Pasajes terrestres"}
+    - {patron: "HOTEL|HOSPEDAJE|ALOJAMIENTO", producto: "Alojamiento"}
+    - {patron: "TAXI|MOVILIDAD", producto: "Taxi y movilidad local"}
+    - {patron: "COMBUSTIBLE|GASOLINA|PETROLEO", producto: "Combustible"}

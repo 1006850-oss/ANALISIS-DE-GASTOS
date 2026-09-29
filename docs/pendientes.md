@@ -3,7 +3,8 @@
 ## Abiertos
 | # | Pendiente | Quién responde | Afecta a |
 |---|---|---|---|
-| – | Ninguno abierto. | | |
+| 13 | Validar la taxonomía: 88 artículos (95 % del gasto) y la muestra de 200 productos en `validacion_taxonomia.xlsx`; luego cargarla con `clasificar.py --aplicar-validacion`. | Usuario | Hilos 3 y 5 |
+| 14 | Asignar (opcional) el segmento UNSPSC a cada categoría, verificando los códigos en la fuente oficial. | Hilo 5 o posterior | Comparaciones externas |
 
 ## Resueltos (2026-09-25)
 | # | Pendiente | Respuesta |

@@ -74,3 +74,15 @@ Una fila por fila de la exportación (línea de OC × factura). Nombres en minú
 | `nivel_aprobacion_oc` | entero 1–5 | Según `monto_oc` y límites en soles; OC en dólares según `monto_oc_me` y límites en dólares |
 
 **Banderas de calidad** (`flag_*`, verdadero/falso): `flag_proveedor_exterior`, `flag_moneda_extranjera`, `flag_sin_factura`, `flag_semestre_por_fecha_oc`, `flag_estado_contradictorio`, `flag_descripcion_vacia`, `flag_clase_vacia`, `flag_facturado_excede_oc` (facturado de la OC > `monto_oc` + 5 %), `flag_fila_duplicada` (idéntica en las 26 columnas; se conserva), `flag_factura_en_varias_oc` (mismo proveedor y factura normalizada en más de una OC).
+
+## Columnas que agrega la clasificación (`tabla_clasificada.parquet`, Hilo 2)
+
+| Columna | Regla |
+|---|---|
+| `categoria` | Nivel 1 (15 categorías de `config/reglas_taxonomia.yaml`), por artículo |
+| `subcategoria` | Nivel 2 (64), por artículo; en Construcción, tipo de intervención según `clase_glosa` |
+| `producto` | Nivel 3: palabras clave en descripción + concepto + nota; si no, el concepto; si no, "Otros – subcategoría" |
+| `origen_categoria`, `confianza_categoria` | `regla` / `humano` (maestro validado) / `sin_articulo`; confianza alta, media o baja |
+| `origen_producto` | `regla_palabra` / `concepto` / `subcategoria` / `humano` / `llm` |
+| `llave_combinacion` | "artículo normalizado \| descripción normalizada" (llave del maestro de productos) |
+| `excluir_de_kraljic` | Verdadero para "Cuentas contables (no gestionables por Compras)" |

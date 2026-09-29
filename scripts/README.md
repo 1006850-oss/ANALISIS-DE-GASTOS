@@ -14,3 +14,14 @@ python scripts/limpiar_validar.py --entrada "DATA TOTAL SOLO.xlsx" --periodo 201
 - Código de salida 2 = una validación BLOQUEA (no se genera la tabla limpia; revisar el reporte).
 
 Pruebas: `python -m pytest -q tests` (para incluir la muestra y el extracto real, copiarlos como `data/muestra.xlsx` y `data/extracto.xlsx`; `data/` no se sube al repositorio).
+
+## Hilo 2 – `clasificar.py`
+
+```bash
+python scripts/clasificar.py --tabla <tabla_limpia.parquet> --salida <carpeta> \
+       [--maestro maestro_categorias.xlsx] [--construir-maestro] [--generar-validacion]
+python scripts/clasificar.py --aplicar-validacion validacion_taxonomia.xlsx --maestro maestro_categorias.xlsx
+```
+
+Salidas: `tabla_clasificada.parquet`, `resumen_clasificacion.xlsx`, `nuevas_para_validar.xlsx` y, según opciones,
+`maestro_propuesto.xlsx` y `validacion_taxonomia.xlsx`. Reglas editables en `config/reglas_taxonomia.yaml`.

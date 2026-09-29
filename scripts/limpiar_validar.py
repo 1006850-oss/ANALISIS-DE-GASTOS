@@ -80,7 +80,8 @@ def limpiar_texto(s: pd.Series, basura: list[str]) -> pd.Series:
     s = s.astype("string")
     for b in basura:
         s = s.str.replace(b, " ", regex=False)
-    s = s.str.replace(r"[\r\n\t]+", " ", regex=True).str.replace(r"\s+", " ", regex=True).str.strip()
+    s = s.str.replace(r"[\x00-\x1f\x7f]+", " ", regex=True)  # saltos de línea y caracteres de control
+    s = s.str.replace(r"\s+", " ", regex=True).str.strip()
     return s.mask(s == "", pd.NA)
 
 

@@ -77,3 +77,25 @@ Rendimiento (entorno en la nube; una laptop normal debería estar en el mismo or
 Pruebas: 14 pruebas con pytest, todas pasan (incluye muestra y extracto real cuando están en `data/`; si no están, esas 2 se saltan).
 
 Para el Hilo 2: usar `tabla_limpia.parquet`; columnas de texto limpias `articulo_normalizado` (410 valores), `descripcion`, `concepto`, `nota`, `clase_glosa`.
+
+## Hilo 2 – Taxonomía y maestro de categorías – 2026-09-29 (construido; falta validación del usuario)
+Decisiones aprobadas por el usuario:
+- 15 categorías; subcategoría por artículo (en Construcción, tipo de intervención según "Clase"); producto por palabras clave.
+- Cuentas contables en su propia categoría: dentro del gasto total, fuera de Kraljic.
+- Taxonomía propia con UNSPSC opcional.
+- Validación: 88 artículos (95 % del gasto) + muestra de 200 combinaciones (100 por gasto, 100 al azar), criterio ≥ 95 %.
+
+Hallazgos que cambiaron la propuesta inicial:
+- El prefijo "GRUPO : SUBGRUPO" solo cubre 106 artículos y el 3.8 % del gasto: no sirve como jerarquía.
+- 88 artículos cubren el 95 % del gasto (16 el 80 %): la validación de niveles 1 y 2 es por artículo.
+
+Resultados (extracto 2015–2017):
+- 62 reglas de artículo clasifican los 410 artículos: 0 filas sin clasificar; gasto por categoría = S/ 283 013 851.95 (cuadra).
+- Confianza "media" en artículos que suman el 2.1 % del gasto.
+- Gasto por categoría: Infraestructura y obras 57.8 % · Equipamiento y mobiliario 7.6 % · Servicios generales 6.7 % · Tecnología 5.5 % · Inmuebles 4.7 % · Cuentas contables 4.1 % · Marketing y admisión 3.5 % · Mantenimiento 2.4 % · Capacitación 1.5 % · Viajes 1.3 % · Material educativo 1.2 % · Suministros 1.2 % · Servicios profesionales 1.1 % · Personal 1.1 % · Seguros 0.3 %.
+- Infraestructura por subcategoría: Obra nueva 45.4 % · Ampliación 36.0 % · Sin tipo 15.8 % · Mejoras 2.2 %. Por producto: Obra civil 56.1 % · Acabados 10.9 % · **Adicionales de obra 10.2 %** · Instalaciones 9.5 % · Supervisión 3.3 % · Expediente y diseño 3.1 %.
+- Producto: 65.4 % del gasto por palabras clave, 31.7 % por "Concepto", 2.9 % solo subcategoría. 791 productos distintos (a consolidar).
+- Corrección en el Hilo 1: se eliminan caracteres de control en los textos (impedían exportar a Excel).
+
+Pruebas: 25 pruebas pytest (14 del Hilo 1 + 11 del Hilo 2), todas pasan.
+Pendiente: validación del usuario (pendiente #13). Para los Hilos 3 y 5: usar `tabla_clasificada.parquet`; Kraljic debe excluir `excluir_de_kraljic`.
