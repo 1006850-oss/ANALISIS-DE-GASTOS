@@ -32,3 +32,12 @@ Para el Hilo 1: extracto real (xlsx), ruta de Google Drive, pendiente #1 (estado
 ### 2026-09-29 – Extracto real
 - El usuario subió "DATA TOTAL SOLO.xlsx" (13.6 MB) a la carpeta de Drive del proyecto. Acceso verificado (metadatos); contenido aún no revisado.
 - El conector de Drive devuelve el archivo completo dentro de la conversación, lo que no es viable con 13.6 MB: el Hilo 1 debe recibirlo como adjunto.
+
+### 2026-09-29 – Perfil del extracto real (hilo de planificación)
+- Revisado "DATA TOTAL SOLO.xlsx": 103 050 filas, 2015–2017, 23 009 OC, 1 403 proveedores. Detalle en `docs/perfil_extracto_real.md`.
+- 4 columnas cambian de nombre respecto a la muestra → se agregó `mapeo_columnas` en parámetros.
+- "Monto MN" no siempre es el total de la OC: la regla de la muestra no aplica tal cual (pendiente #9).
+- Gasto por "Monto facturado" por fila: S/ 283 013 851.95 (control provisional para el Hilo 1).
+- Hay OC en dólares; "Monto facturado" ya viene en soles.
+- "Empleado" = "Supervisor" en el 94 % de las OC (pendiente #10).
+- Nuevos pendientes: #9 a #12.
