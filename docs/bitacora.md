@@ -28,3 +28,7 @@ Para el Hilo 1: extracto real (xlsx), ruta de Google Drive, pendiente #1 (estado
 - Carpeta de Drive: "analisis de gastos" (`1mZsi-I-oM9YzQbtjmVRzPI7iB3LG_pXm`), acceso verificado; está vacía.
 - "SUPERVISOR" = aprobador de la OC. La data trae un solo aprobador por OC: no se puede verificar la cadena completa de aprobación.
 - Pendiente: extracto real.
+
+### 2026-09-29 – Extracto real
+- El usuario subió "DATA TOTAL SOLO.xlsx" (13.6 MB) a la carpeta de Drive del proyecto. Acceso verificado (metadatos); contenido aún no revisado.
+- El conector de Drive devuelve el archivo completo dentro de la conversación, lo que no es viable con 13.6 MB: el Hilo 1 debe recibirlo como adjunto.

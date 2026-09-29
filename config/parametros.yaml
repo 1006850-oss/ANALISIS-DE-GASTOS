@@ -71,6 +71,9 @@ rutas:
   drive_url: "https://drive.google.com/drive/folders/1mZsi-I-oM9YzQbtjmVRzPI7iB3LG_pXm"
   # Ruta local si la carpeta se sincroniza con Google Drive para escritorio (ajustar en cada equipo).
   raiz_datos: "RUTA_LOCAL_A_GOOGLE_DRIVE/analisis de gastos"
+  # Extracto real entregado el 2026-09-29 (13.6 MB, en la carpeta raíz de Drive).
+  extracto_real_nombre: "DATA TOTAL SOLO.xlsx"
+  extracto_real_drive_id: "1B6W7a1iF_iEQ386QzbFv6I19do_TF5DO"
   entrada: "entrada"        # exportación del ERP del semestre (xlsx)
   maestro: "maestro"        # maestro_categorias.xlsx
   historico: "historico"    # resultados acumulados por semestre
