@@ -27,7 +27,7 @@ aquí su entrega.
 
 | Hilo | Bloque | Depende de | Entrega principal |
 |---|---|---|---|
-| 0 | Fundaciones: decisiones, estructura, reglas | – | Diccionario de datos, reglas de negocio, parámetros, estructura de carpetas |
+| 0 ✅ | Fundaciones: decisiones, estructura, reglas | – | Diccionario de datos, reglas de negocio, parámetros, estructura de carpetas |
 | 1 | Carga, limpieza y validación | 0 | `limpiar_validar.py` + tabla limpia + reporte de calidad |
 | 2 | Taxonomía y maestro de categorías | 1 | `clasificar.py` + `maestro_categorias.xlsx` validado |
 | 3 | Análisis descriptivo (Pareto, frecuencias, montos, cruces) | 1, 2 | `analizar.py` |
@@ -39,7 +39,11 @@ aquí su entrega.
 
 Los hilos 2 y 4 pueden trabajarse en paralelo después del hilo 1.
 
-## Prompt de arranque para cada hilo
+## Prompts
+
+El prompt completo de cada hilo se guarda en `prompts/hilo_N.md`. Todos empiezan con la línea de arranque:
+
+## Línea de arranque
 
 > Trabajo en el repositorio `analisis-de-gastos`. Lee `PLAN.md` y `docs/bitacora.md`.
 > Hoy desarrollamos el **Hilo N – [bloque]**. Al terminar, deja el código probado,
