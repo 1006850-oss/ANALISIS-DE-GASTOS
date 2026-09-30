@@ -164,3 +164,12 @@ Resultado provisional (propuesta de IA en las 78 unidades, marcada como tal):
 
 Pruebas: 47 pytest (7 nuevas), todas pasan.
 Pendiente #16: taller de expertos. Para los Hilos 6 y 7: `tablas/kraljic_unidades.parquet` (cuadrante por unidad).
+
+## Hilo 6 – Plan de compras anual – 2026-09-30 (cerrado; ejercicio metodológico 2018)
+Decisiones del usuario: segmentación aprobada (por proyecto / recurrente / variable / esporádica); método "gasto por sede" con 54 sedes; sin inflación; modalidades según su política (1, 2, 3 cotizaciones y licitación > S/ 80 000); plazos propuestos por el asistente (supuestos: 1/2/3/8 semanas; obras 10).
+Resultados:
+- Segmentos: 24 por proyecto (sin proyección; S/ 83.1 M en 2017), 11 recurrentes (línea base S/ 18.9 M), 38 variables (S/ 28.7 M), 5 esporádicas (reserva S/ 0.75 M).
+- Validación hacia atrás (2017 con 2015–16): gasto por sede −10.0 % (recurrentes) y −8.2 % (variables) en el total anual; ~25 % de error mensual. La tendencia lineal acertó más en 2017 (±1 %), pero se usa solo como comparación.
+- Hallazgo: 47 unidades (S/ 48.1 M) se compran en 6 550 OC pequeñas, pero su volumen anual corresponde a licitación → oportunidad de consolidación (y de reducir fraccionamiento).
+- Obras: adicionales = 17 % de la obra civil; meses de mayor ejecución de obra civil: oct–dic.
+- Pruebas: 54 pytest (7 nuevas), todas pasan. Pendiente #17: plazos reales.

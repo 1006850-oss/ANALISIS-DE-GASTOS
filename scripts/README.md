@@ -53,3 +53,12 @@ python scripts/kraljic.py --tabla <tabla_clasificada.parquet> --salida <carpeta>
 
 Salidas: `kraljic.xlsx` (Resumen, Unidades, Categorías, Productos, Estrategias), `kraljic_taller.xlsx` (para los expertos),
 `tablas/kraljic_*.parquet` y `graficos/kraljic_*.png`. Parámetros y propuesta de IA en `config/kraljic.yaml`.
+
+## Hilo 6 – `proyectar.py`
+
+```bash
+python scripts/proyectar.py --tabla <tabla_clasificada.parquet> --kraljic <tablas/kraljic_unidades.parquet> --salida <carpeta>
+```
+
+Salida: `plan_compras.xlsx` (Notas, Plan_anual, Plan_mensual, Calendario_procesos, Obras_referencias, Validacion_atras,
+Segmentos, Sedes_activas) y `tablas/plan_*.parquet`. Parámetros en `config/plan_compras.yaml`.

@@ -33,7 +33,7 @@ aquí su entrega.
 | 3 ✅ | Análisis descriptivo (Pareto, frecuencias, montos, cruces) | 1, 2 | `analizar.py` |
 | 4 ✅ | Control y alertas (fraccionamiento, duplicados, ciclo OC→factura, adicionales, giro) | 1 | `alertas.py` |
 | 5 ✅ | Matriz de Kraljic (riesgo provisional hasta el taller de expertos) | 2, 3 | `kraljic.py` + plantilla de puntaje de riesgo |
-| 6 | Plan de compras anual | 2, 3 | `proyectar.py` |
+| 6 ✅ | Plan de compras anual (ejercicio metodológico 2018) | 2, 3 | `proyectar.py` |
 | 7 | Salidas: Excel, tablero e informe | 3 a 6 | `generar_excel.py`, modelo para Power BI, plantilla de informe |
 | 8 | Integración y automatización (skill) | 0 a 7 | Skill `analisis-gastos-compras` + prueba de un ciclo completo |
 
