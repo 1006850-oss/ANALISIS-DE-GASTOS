@@ -62,3 +62,16 @@ python scripts/proyectar.py --tabla <tabla_clasificada.parquet> --kraljic <tabla
 
 Salida: `plan_compras.xlsx` (Notas, Plan_anual, Plan_mensual, Calendario_procesos, Obras_referencias, Validacion_atras,
 Segmentos, Sedes_activas) y `tablas/plan_*.parquet`. Parámetros en `config/plan_compras.yaml`.
+
+## Hilo 7 – `generar_excel.py` y `generar_informe.py`
+
+```bash
+python scripts/generar_excel.py --descriptivo <dir H3> --alertas <dir H4> --kraljic <dir H5> --plan <dir H6> \
+       --tabla <tabla_clasificada.parquet> --calidad <reporte_calidad.xlsx> --periodo 2015-2017 --salida <carpeta>
+python scripts/generar_informe.py --descriptivo <dir H3> --alertas <dir H4> --kraljic <dir H5> --plan <dir H6> \
+       --periodo 2015-2017 --salida <carpeta>
+```
+
+Salidas: `resultados_<periodo>.xlsx` (tablero en Excel + detalle), `tablero/*.parquet` (modelo en estrella),
+`informe_ejecutivo_<periodo>.xlsx` (5 hojas para el CEO) e `informe_trazabilidad.xlsx`. `generar_informe.py` termina con
+error si alguna cifra del informe no coincide con su fuente. Ver `docs/tablero.md` y `docs/informe.md`.

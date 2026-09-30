@@ -173,3 +173,21 @@ Resultados:
 - Hallazgo: 47 unidades (S/ 48.1 M) se compran en 6 550 OC pequeñas, pero su volumen anual corresponde a licitación → oportunidad de consolidación (y de reducir fraccionamiento).
 - Obras: adicionales = 17 % de la obra civil; meses de mayor ejecución de obra civil: oct–dic.
 - Pruebas: 54 pytest (7 nuevas), todas pasan. Pendiente #17: plazos reales.
+
+## Hilo 7 – Salidas: tablero en Excel e informe ejecutivo – 2026-09-30 (cerrado)
+Decisiones del usuario: sin Power BI (tablero en Excel); informe en Excel de máximo 5 hojas para el CEO (políticas,
+posibles incumplimientos, compras anómalas, estrategias); sin colores ni logo institucional.
+Entregas:
+- `generar_excel.py` → `resultados_2015-2017.xlsx`: 19 hojas (5 tableros con gráficos nativos + detalle con filtros +
+  control de calidad + glosario) y modelo en estrella en `tablero/*.parquet` para un Power BI futuro.
+- `generar_informe.py` → `informe_ejecutivo_2015-2017.xlsx` (5 hojas, BORRADOR) + `informe_trazabilidad.xlsx`.
+  Verificación automática de cifras: OK.
+Mensajes del informe (todas las cifras salen de las tablas): gasto S/ 275.4 M (×3.1 de 2015 a 2017); 81 proveedores
+= 80.1 %; obras 56.9 %; 312 señales de prioridad alta; consolidación de 47 tipos de compra (S/ 48.1 M, 6 550 OC).
+Decisiones propuestas al CEO: segregación de funciones desde el nivel 2; contratos anuales para compras consolidables;
+tope y aprobación previa de adicionales de obra, más revisión de los 128 casos de fraccionamiento de prioridad alta.
+Nota: el archivo de resultados muestra RUC y razón social de proveedores (archivo interno en Drive); el informe al CEO no.
+LibreOffice no pudo abrir ningún xlsx en este entorno (falla del entorno, incluso con un archivo trivial); la integridad
+se validó leyendo el zip y el XML (0 partes mal formadas) y con openpyxl.
+Pruebas: 60 pytest (6 nuevas: totales, claves del modelo en estrella, cifra alterada detectada, sin nombres ni RUC,
+5 hojas en una página, reproducible), todas pasan.
