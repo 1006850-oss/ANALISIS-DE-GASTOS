@@ -137,3 +137,10 @@ Resultados (OC 2015–2017):
 
 Pruebas: 39 pytest (7 nuevas del Hilo 4), todas pasan.
 Para el Hilo 7: tablas en `tablas/*.parquet` y `alertas.xlsx`.
+
+## Validación de la taxonomía – 2026-09-30 (Hilo 2 cerrado)
+- Parte 1 (usuario): mejoras → Mantenimiento; "Otras cuentas por pagar" → Seguros (son cuotas de pólizas); "Inventario activo fijo" → Servicios profesionales (servicio de inventario); "Gestión de beneficios" → Personal › Beneficios al personal; INDECI, "Otros servicios" y "Asesoría terceros" se confirman. Las otras 78 propuestas, aprobadas en bloque.
+- Parte 2 (delegada a revisión asistida por IA): muestra 1 = 79.0 % → reglas nuevas; muestra 2 independiente = 84.5 %; se corrigieron patrones sistemáticos y 8 casos en el maestro. 95 % pendiente de confirmar en el próximo ciclo (pendiente #15).
+- Mejoras al código: nombres limpios para el "Concepto" (`conceptos` en las reglas), reglas de producto para todas las categorías (`productos_todas`), origen `llm` en el maestro y **solo las correcciones reemplazan el producto** (se detectó y corrigió un defecto que inflaba los adicionales a S/ 28.4 M; prueba de regresión agregada).
+- Cifras con la taxonomía validada: Infraestructura y obras 56.9 % del gasto analizado; Mantenimiento 2.9 %; Seguros 0.55 %; Cuentas contables 3.7 %. Adicionales de obra S/ 15.1 M (9.3 % de obras), 6 sedes y 9 proveedores sobre el umbral. Fraccionamiento: 212 casos (128 alta).
+- Pruebas: 40 pytest, todas pasan. Hilos 3 y 4 regenerados.

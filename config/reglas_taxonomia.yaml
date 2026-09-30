@@ -12,7 +12,7 @@
 #   3. Si ninguna coincide: categoría "Sin clasificar" (se lista para validar).
 # "confianza": alta = coincidencia evidente; media = propuesta que conviene revisar.
 
-version: "2026-09-29"
+version: "2026-09-30"
 
 categorias:
   - "Infraestructura y obras"
@@ -52,7 +52,7 @@ articulos:
   - {patron: "\\bEPS\\b", categoria: "Cuentas contables (no gestionables por Compras)", subcategoria: "Aportes EPS", confianza: alta}
   - {patron: "INTERESES|OTROS GASTOS FINANCIEROS", categoria: "Cuentas contables (no gestionables por Compras)", subcategoria: "Gastos financieros", confianza: alta}
   - {patron: "CONTRIBUCION SMV|DERECHO DE COTIZACION|ARBITRIOS|INDECOPI|MINTRA", categoria: "Cuentas contables (no gestionables por Compras)", subcategoria: "Tributos, tasas y contribuciones", confianza: alta}
-  - {patron: "OTRAS CUENTAS POR PAGAR|INVENTARIO ACTIVO FIJO|GASTOS REPARABLES|OTROS ACTIVOS INTANGIBLES|DONACION|RETRIBUCIONES AL DIRECTORIO|ADMISION : BONIFICACION", categoria: "Cuentas contables (no gestionables por Compras)", subcategoria: "Otros ajustes contables", confianza: media}
+  - {patron: "GASTOS REPARABLES|OTROS ACTIVOS INTANGIBLES|DONACION|RETRIBUCIONES AL DIRECTORIO|ADMISION : BONIFICACION", categoria: "Cuentas contables (no gestionables por Compras)", subcategoria: "Otros ajustes contables", confianza: media}
 
   # ---------------- Viajes y movilidad (antes que Marketing/Capacitación, que tienen viajes con prefijo)
   - {patron: "PASAJE", categoria: "Viajes y movilidad", subcategoria: "Pasajes", confianza: alta}
@@ -61,7 +61,8 @@ articulos:
 
   # ---------------- Infraestructura y obras
   - {patron: "^CONSTRUCCION$", categoria: "Infraestructura y obras", subcategoria: "(según clase)", confianza: alta}
-  - {patron: "MEJORAS INFRAESTRUCTURA|MEJORAS Y REPOSICION|^MEJORAS$|NECESIDADES Y MEJORAS|PLAN DE MEJORAS", categoria: "Infraestructura y obras", subcategoria: "Mejoras y mantenimiento mayor", confianza: media}
+  # Decisión del usuario (2026-09-30): las "mejoras" son mantenimiento.
+  - {patron: "MEJORAS INFRAESTRUCTURA|MEJORAS Y REPOSICION|^MEJORAS$|NECESIDADES Y MEJORAS|PLAN DE MEJORAS", categoria: "Mantenimiento", subcategoria: "Mejoras y reposiciones", confianza: alta}
   - {patron: "MATERIAL CONCRETO", categoria: "Infraestructura y obras", subcategoria: "Materiales de construcción", confianza: alta}
   - {patron: "INDECI|PLAN DE MANEJO AMBIENTAL", categoria: "Infraestructura y obras", subcategoria: "Licencias, permisos y estudios", confianza: media}
 
@@ -91,6 +92,8 @@ articulos:
 
   # ---------------- Seguros
   - {patron: "SEGURO", categoria: "Seguros", subcategoria: "Seguros", confianza: alta}
+  # Decisión del usuario (2026-09-30): "compras reales". En 2015–2017 son cuotas de pólizas (multirriesgo, RC).
+  - {patron: "OTRAS CUENTAS POR PAGAR", categoria: "Seguros", subcategoria: "Seguros", confianza: media}
 
   # ---------------- Marketing y admisión
   - {patron: "CALL CENTER", categoria: "Marketing y admisión", subcategoria: "Call center", confianza: alta}
@@ -123,13 +126,14 @@ articulos:
 
   # ---------------- Personal: bienestar y gestión humana
   - {patron: "RECLUTAMIENTO|SELECCION|VERIFICACION DE ANTECEDENTES|REFERIDOS", categoria: "Personal: bienestar y gestión humana", subcategoria: "Reclutamiento y selección", confianza: alta}
-  - {patron: "EVALUACION DESEMPENO|ENCUESTA|CULTURA Y COMUNICACION|COMUNICACION INTERNA|KIT DE CLIMA|GESTION DE BENEFICIOS|DESARROLLO - EXPERTOS|COACHING", categoria: "Personal: bienestar y gestión humana", subcategoria: "Clima, evaluación y comunicación interna", confianza: media}
+  - {patron: "EVALUACION DESEMPENO|ENCUESTA|CULTURA Y COMUNICACION|COMUNICACION INTERNA|KIT DE CLIMA|DESARROLLO - EXPERTOS|COACHING", categoria: "Personal: bienestar y gestión humana", subcategoria: "Clima, evaluación y comunicación interna", confianza: media}
+  - {patron: "GESTION DE BENEFICIOS", categoria: "Personal: bienestar y gestión humana", subcategoria: "Beneficios al personal", confianza: alta}
   - {patron: "UNIFORMES|FOTOCHECK|KIT DE BIENVENIDA", categoria: "Personal: bienestar y gestión humana", subcategoria: "Uniformes y kits", confianza: alta}
   - {patron: "AGASAJO|DIA DEL MAESTRO|BIENESTAR|CELEBRACION|DESAYUNOS|SOUVENIRS|CEREMONIA|INTEGRACION|ENTRADAS AL CINE", categoria: "Personal: bienestar y gestión humana", subcategoria: "Agasajos y bienestar", confianza: alta}
 
   # ---------------- Servicios profesionales
   - {patron: "ASESORIA LEGAL|NOTARIAL", categoria: "Servicios profesionales", subcategoria: "Legal y notarial", confianza: alta}
-  - {patron: "CONTABLE|AUDITORIA|PRECIOS DE TRANSFERENCIA", categoria: "Servicios profesionales", subcategoria: "Contable, tributaria y auditoría", confianza: alta}
+  - {patron: "CONTABLE|AUDITORIA|PRECIOS DE TRANSFERENCIA|INVENTARIO ACTIVO FIJO", categoria: "Servicios profesionales", subcategoria: "Contable, tributaria y auditoría", confianza: alta}
   - {patron: "CLASIFICADORAS|CLASIFICACION DE RIESGO|INFOCORP", categoria: "Servicios profesionales", subcategoria: "Clasificación de riesgo y centrales", confianza: alta}
   - {patron: "ACREDITACION", categoria: "Servicios profesionales", subcategoria: "Acreditación", confianza: alta}
   - {patron: "ASESORIA|CONSULTORIA|HONORARIOS|ACUERDO DE SERVICIO|SUSCRIPCIONES", categoria: "Servicios profesionales", subcategoria: "Consultoría y asesoría", confianza: alta}
@@ -148,14 +152,28 @@ productos:
     # original y no un adicional de obra (ajuste aprobado en el Hilo 4).
     - {patron: "(?<!AULAS )(?<!AULA )ADICIONAL", producto: "Adicionales de obra"}
     - {patron: "SUPERVIS", producto: "Supervisión de obra"}
-    - {patron: "EXPEDIENTE|PROYECTO ARQ|DISENO|ARQUITECT|INGENIERIA|ESTUDIO|TOPOGRAF|SUELOS", producto: "Expediente técnico y diseño"}
-    - {patron: "LICENCIA|MUNICIPAL|PERMISO|INDECI|DEFENSA CIVIL", producto: "Licencias y permisos"}
-    - {patron: "ELECTRIC|SANITAR|CABLE|CABLEADO|TABLERO|AIRE ACONDICIONADO|ASCENSOR|INSTALACION", producto: "Instalaciones y especialidades"}
-    - {patron: "PINTUR|PINTADO|PISO|ACABADO|CARPINTER|VIDRI|PUERTA|VENTANA|TOLDO|GRASS|MELAMIN|ALUMINIO|CIELO RASO|DRYWALL", producto: "Acabados y carpintería"}
-    - {patron: "DEMOLI|MOVIMIENTO DE TIERRA|EXCAVAC|ELIMINACION DE DESMONTE", producto: "Demolición y movimiento de tierras"}
-    - {patron: "CONCRETO|CEMENTO|FIERRO|LADRILLO|AGREGADO|MATERIAL", producto: "Materiales de construcción"}
-    - {patron: "OBRA|CONSTRUC|EDIFIC|AULA|PABELLON|AMPLIAC|CASCO|ESTRUCTUR|LOSA|CERCO|MURO", producto: "Obra civil"}
+    - {patron: "PLOTEO|IMPRESION DE PLANOS", producto: "Impresiones y ploteos"}
+    - {patron: "EXPEDIENTE|PROYECTO ARQ|PROYECTO ESTRUCTURAL|DISENO|ARQUITECT|INGENIERIA|ESTUDIO|TOPOGRAF|SUELOS|PLANOS", producto: "Expediente técnico y diseño"}
+    # Reglas agregadas tras la revisión de la muestra (2026-09-30):
+    - {patron: "ENMALLADO|CERCO|MURO|PARAPETO", producto: "Obra civil"}
+    - {patron: "TOLDO|TENSO|TENSIONADA|MONOFILAMENTO|COBERTURA|MALLA RACH", producto: "Coberturas y tensoestructuras"}
+    - {patron: "MOVIMIENTO.{0,20}MOBILIARIO|MOVIMIENTOS? DE AULAS|FLETE|TRASLADO|MUDANZA|TRANSPORTE", producto: "Fletes y traslados"}
+    - {patron: "BASKET|ARCOS? DE FUTBOL|GRASS SINTETICO FUTBOL|JUEGOS? INFANTIL", producto: "Equipamiento deportivo y recreativo"}
+    - {patron: "SENALETICA|EXTINTOR|COLGADOR|SUJETADOR|LUZ DE EMERGENCIA|LUCES DE EMERGENCIA", producto: "Implementación de seguridad (INDECI)"}
+    - {patron: "LICENCIA|MUNICIPAL|PERMISO|INDECI|DEFENSA CIVIL|CERTIFICACION DE (?:VENTILACION|SISTEMA|INDECI)", producto: "Licencias y permisos"}
+    - {patron: "ELECTRIC|SANITAR|CABLE|CABLEADO|TABLERO|AIRE ACONDICIONADO|ASCENSOR|TRANSFORMADOR|TOMAS|LAMPARA|LUMINARIA|POZO A TIERRA|VALVULA|DESAGUE|RED DE AGUA|EMPALME DE AGUA|DRENAJE|BOMBA|BOMBEO|INTERRUPTOR|PANEL SOLAR|ON-GRID|UPS|INTRUSION|ALARMA|CAMARA|\\bDATA\\b|ACCESS POINT", producto: "Instalaciones y especialidades"}
+    - {patron: "PINTUR|PINTADO|PISO|ACABADO|CARPINTER|VIDRI|PUERTA|VENTANA|MAMPARA|CHAPA|CERRADURA|TOALLERO|GRIFERIA|GRASS|MELAMIN|ALUMINIO|CIELO RASO|DRYWALL|IMPERMEABILIZ|BALDOSA|LOZETA|PANELES", producto: "Acabados y carpintería"}
+    - {patron: "INSTALACION", producto: "Instalaciones y especialidades"}
+    - {patron: "DEMOLI|MOVIMIENTOS? DE TIERRA|NIVELACION|EXCAVAC|ELIMINACION DE DESMONTE|CORTE DE TERRENO", producto: "Demolición y movimiento de tierras"}
+    - {patron: "CONCRETO PREMEZCLADO|CEMENTO|FIERRO|LADRILLO|AGREGADO", producto: "Materiales de construcción"}
+    - {patron: "OBRA|CONSTRUC|EDIFIC|AULA|PABELLON|AMPLIAC|CASCO|ESTRUCTUR|LOSA|PAVIMENT|VEREDA|PISTA|REFORZAMIENTO", producto: "Obra civil"}
   Mantenimiento:
+    - {patron: "PLATAFORMA DE (?:MANT|MTTO)|MTTO INTEGRAL|MANTENIMIENTO INTEGRAL", producto: "Mantenimiento integral de sede"}
+    - {patron: "CANALIZACION|CABLEADO|PUNTO DATA|PUNTOS DE RED", producto: "Cableado de red"}
+    - {patron: "PUNTO DE CORRIENTE|TOMACORRIENTE|INTERRUPTOR|INTERUPTOR", producto: "Mantenimiento eléctrico"}
+    - {patron: "TABLERO|TOCATIMBRE", producto: "Mantenimiento eléctrico"}
+    - {patron: "FILTRACION|TUBERIA|SANITAR|GASFITER|DESAGUE|DESATORO|TANQUE|CISTERNA", producto: "Mantenimiento sanitario"}
+    - {patron: "PUERTA|CHAPA|CERRADURA|CARPINTER|VENTANA", producto: "Mantenimiento de carpintería"}
     - {patron: "AIRE ACONDICIONADO|ASCENSOR|GRUPO ELECTROGENO|BOMBA", producto: "Mantenimiento de equipos electromecánicos"}
     - {patron: "FOTOCOPIADORA|IMPRESORA|COMPUTADORA|PROYECTOR|INFORMATIC", producto: "Mantenimiento de equipos informáticos y de oficina"}
     - {patron: "PINTUR|PINTADO", producto: "Pintura"}
@@ -170,6 +188,9 @@ productos:
     - {patron: "CAMARA|CCTV|ALARMA", producto: "Equipos de seguridad"}
     - {patron: "COCINA|REFRIGERA|FRIGOBAR|MICROONDAS|DISPENSADOR", producto: "Electrodomésticos"}
   Tecnología:
+    - {patron: "HOUSING", producto: "Housing y servicios administrados"}
+    - {patron: "SOPORTE TECNICO", producto: "Soporte técnico"}
+    - {patron: "CISCO|FIREWALL|ROUTER|SWITCH|ACCESS POINT|SERVIDOR", producto: "Equipos de red y servidores"}
     - {patron: "INTERNET|FIBRA|ENLACE|DATOS", producto: "Internet y enlaces de datos"}
     - {patron: "CELULAR|MOVIL|RADIO|TELEFON", producto: "Telefonía"}
     - {patron: "LAPTOP|COMPUTADORA|\\bPC\\b|DESKTOP|TABLET|IPAD", producto: "Computadoras y tablets"}
@@ -177,8 +198,67 @@ productos:
     - {patron: "SERVIDOR|SWITCH|ROUTER|ACCESS POINT|RED ", producto: "Equipos de red y servidores"}
     - {patron: "LICENCIA|SUSCRIPCION|OFFICE|MICROSOFT|GOOGLE|ANTIVIRUS", producto: "Licencias de software"}
   Viajes y movilidad:
+    - {patron: "COMBUSTIBLE|GASOLINA|PETROLEO", producto: "Combustible"}
     - {patron: "AERE|VUELO|AVION", producto: "Pasajes aéreos"}
-    - {patron: "TERRESTRE|BUS", producto: "Pasajes terrestres"}
+    - {patron: "TERRESTRE|\\bBUS\\b", producto: "Pasajes terrestres"}
     - {patron: "HOTEL|HOSPEDAJE|ALOJAMIENTO", producto: "Alojamiento"}
     - {patron: "TAXI|MOVILIDAD", producto: "Taxi y movilidad local"}
     - {patron: "COMBUSTIBLE|GASOLINA|PETROLEO", producto: "Combustible"}
+
+# Reglas de producto válidas para TODAS las categorías: se aplican después de las de la categoría
+# y antes de usar el "Concepto" (agregadas tras la revisión de la muestra, 2026-09-30).
+productos_todas:
+  - {patron: "SOPORTE TECNICO|SOPORTE REMOTO|OUTSOURCING", producto: "Soporte técnico"}
+  - {patron: "PORTERIA", producto: "Seguridad y portería"}
+  - {patron: "SISTEMA DE INTRUSION|SISTEMA INTRUSION|ALARMA", producto: "Sistemas de seguridad electrónica"}
+  - {patron: "\\bUPS\\b|ACOMETIDA", producto: "Instalaciones y equipos eléctricos"}
+  - {patron: "PARLANTE|PROYECTOR|MICROFONO", producto: "Equipos audiovisuales"}
+  - {patron: "INSTRUMENTOS? MUSICAL", producto: "Instrumentos musicales"}
+  - {patron: "EQUIPOS DE COMUNICACION", producto: "Equipos de comunicación"}
+  - {patron: "\\\\bCURSOS? DE (?:ACTUALIZACION|CAPACITACION|FORMACION)", producto: "Cursos de capacitación"}
+  - {patron: "DESARROLLO DE CONTENIDOS|ELABORACION DE UNIDADES", producto: "Desarrollo de contenidos educativos"}
+  - {patron: "FEE DIGITAL|FEE AGENCIA|FEE MEDIOS", producto: "Honorarios de agencia (fee)"}
+  - {patron: "TOLDO|TENSO|TENSIONADA|MONOFILAMENTO|COBERTURA|MALLA RACH", producto: "Coberturas y tensoestructuras"}
+  - {patron: "VALVULA|FLOTADOR|AUTOMATICOS DE NIVEL", producto: "Instalaciones y especialidades"}
+  - {patron: "TORRES? VENTADA|ANTENA", producto: "Infraestructura de telecomunicaciones"}
+  - {patron: "FLETE|TRASLADO DE MOBILIARIO|ENVIO DE", producto: "Fletes y traslados"}
+  - {patron: "ENTREGA Y CUSTODIA|CUSTODIA DE MATERIAL", producto: "Distribución y almacenaje"}
+  - {patron: "NUEVA WEB|PAGINA WEB|DESARROLLO WEB|SITIO WEB", producto: "Desarrollo web"}
+  - {patron: "PLATAFORMAS? ACADEMICA|DATAMANAGEMENT|PLATAFORMA DE GESTION", producto: "Desarrollo de plataformas"}
+  - {patron: "NEGOCIACION DE TERRENOS", producto: "Intermediación inmobiliaria"}
+  - {patron: "\\bPOLOS?\\b|MERCHANDISING", producto: "Merchandising"}
+  - {patron: "ROLL SCREEN|BANNER|MATERIALES EASY|VOLANTE", producto: "Material promocional"}
+
+# Nivel 3 cuando el producto sale del "Concepto" del ERP: nombre limpio por concepto normalizado.
+# Los conceptos que no están aquí usan su escritura más frecuente (variantes de mayúsculas/tildes se unen).
+conceptos:
+  "FOFOCOPIAS E IMPRESIONES": "Fotocopias e impresiones"
+  "FOTOCOPIAS E IMPRESIONES": "Fotocopias e impresiones"
+  "CLARO": "Telefonía e internet"
+  "FEE": "Honorarios de agencia (fee)"
+  "BANCOS": "Servicios bancarios y financieros"
+  "GAF": "Gastos de administración y finanzas"
+  "EPS": "Aportes EPS"
+  "FEN": "Prevención Fenómeno El Niño"
+  "PBL": "Aprendizaje basado en proyectos (PBL)"
+  "IPERC": "Estudio IPERC (seguridad y salud en el trabajo)"
+  "TRANSLADO": "Traslados"
+  "SERVICIO TRADUCCION": "Servicio de traducción"
+  "SERVICIO DE TRADUCCION": "Servicio de traducción"
+  "SENALETICA": "Señalética"
+  "SENALETICAS": "Señalética"
+  "MERCHANDASING": "Merchandising"
+  "CINTILLO KLIPX": "Cintillos de identificación"
+  "MATERIAL ED. FISICA": "Material de educación física"
+  "SESIONES": "Sesiones de capacitación"
+  "CONSTRUCCION": "Obras menores"
+  "OBRA": "Obras menores"
+  "INSTALACION": "Instalaciones"
+  "APOYO PERSONAL": "Personal de apoyo"
+  "SMS": "Mensajería SMS"
+  "VENTANAS - COMPRA": "Ventanas"
+  "INVENTARIO": "Inventario de activo fijo"
+  "SEGURO": "Seguros"
+  "SEGURO ESTUDIANTIL": "Seguro estudiantil"
+  "ALQUILER DISPENSADORES AGUA": "Alquiler de dispensadores de agua"
+  "SUPERVISION DE OBRA": "Supervisión de obra"

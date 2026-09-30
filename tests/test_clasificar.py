@@ -146,3 +146,29 @@ def test_muestra_de_validacion_tiene_200_y_es_reproducible(tabla_sintetica):
     n_comb = t.loc[t["monto_gasto"] > 0, "llave_combinacion"].nunique()
     assert len(a) == min(200, n_comb) and a["Llave"].is_unique
     pd.testing.assert_frame_equal(a.reset_index(drop=True), b.reset_index(drop=True))
+
+
+def test_confirmar_no_propaga_producto_y_corregir_si(tmp_path):
+    """Regresión: al confirmar (SI) una combinación, el producto NO se fija para todas sus filas
+    (puede variar por fila según la nota). Solo una corrección (NO + producto) reemplaza."""
+    t = limpia([
+        fila(**{"N° de Orden de Compra": 1, "Descripcion": "AMPLIACION OBRA CIVIL", "Procura": "adicional de obra"}),
+        fila(**{"N° de Orden de Compra": 2, "Descripcion": "AMPLIACION OBRA CIVIL", "Procura": None}),
+        fila(**{"N° de Orden de Compra": 3, "Descripcion": "Letreros de ambientes"}),
+    ])
+    tc, arts = cl.clasificar(t, REGLAS)
+    assert tc["producto"].tolist()[:2] == ["Adicionales de obra", "Obra civil"]
+    maestro = tmp_path / "maestro.xlsx"
+    cl.escribir_excel(maestro, cl.construir_maestro(tc, arts, REGLAS))
+    val = tmp_path / "val.xlsx"
+    hojas = cl.generar_validacion(tc, arts, REGLAS)
+    m = hojas["Muestra_productos"]
+    m["¿Correcto? (SI/NO)"] = "SI"
+    letreros = m["Descripción"] == "Letreros de ambientes"
+    m.loc[letreros, ["¿Correcto? (SI/NO)", "Producto corregido"]] = ["NO", "Señalética"]
+    cl.escribir_excel(val, hojas)
+    cl.aplicar_validacion(val, maestro, origen_productos="llm")
+    m_art, m_comb = cl.leer_maestro(maestro)
+    t2, _ = cl.clasificar(t, REGLAS, m_art, m_comb)
+    assert t2["producto"].tolist() == ["Adicionales de obra", "Obra civil", "Señalética"]
+    assert t2["origen_producto"].tolist()[2] == "llm"

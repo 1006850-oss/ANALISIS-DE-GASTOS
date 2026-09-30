@@ -92,6 +92,18 @@ def leer_maestro(ruta: Path | str | None) -> tuple[pd.DataFrame | None, pd.DataF
 
 # ------------------------------------------------------------------- nivel 3
 
+def nombre_concepto(concepto: pd.Series, mapa: dict) -> pd.Series:
+    """Nombre limpio del concepto: primero el mapa de reglas; si no, la escritura más frecuente del concepto
+    normalizado (así 'Supervision de Obra' y 'Supervisión de Obra' quedan como un solo producto)."""
+    c = concepto.astype("string").str.strip()
+    norm = normalizar(c).mask(c.isna())
+    frecuente = (pd.DataFrame({"n": norm, "c": c}).dropna().groupby("n")["c"]
+                 .agg(lambda s: s.value_counts().sort_index().idxmax()))
+    etiqueta = frecuente.str.capitalize().to_dict()
+    etiqueta.update({k.upper(): v for k, v in mapa.items()})
+    return norm.map(etiqueta).astype("string")
+
+
 def asignar_productos(t: pd.DataFrame, reglas: dict) -> tuple[pd.Series, pd.Series]:
     texto = normalizar(t["descripcion"].fillna("") + " " + t["concepto"].fillna("") + " " + t["nota"].fillna(""))
     producto = pd.Series(pd.NA, index=t.index, dtype="string")
@@ -102,7 +114,11 @@ def asignar_productos(t: pd.DataFrame, reglas: dict) -> tuple[pd.Series, pd.Seri
             m = en_cat & producto.isna() & texto.str.contains(r["patron"], regex=True)
             producto[m] = r["producto"]
             origen[m] = "regla_palabra"
-    concepto = titulo(t["concepto"].astype("string"))
+    for r in reglas.get("productos_todas") or []:
+        m = producto.isna() & texto.str.contains(r["patron"], regex=True)
+        producto[m] = r["producto"]
+        origen[m] = "regla_palabra"
+    concepto = nombre_concepto(t["concepto"], reglas.get("conceptos") or {})
     m = producto.isna() & concepto.notna() & (t["categoria"] != "Infraestructura y obras")
     producto[m] = concepto[m]
     origen[m] = "concepto"
@@ -148,8 +164,11 @@ def clasificar(t: pd.DataFrame, reglas: dict, maestro_art: pd.DataFrame | None =
     t["producto"], t["origen_producto"] = asignar_productos(t, reglas)
 
     if maestro_comb is not None and len(maestro_comb):
+        # Solo las CORRECCIONES reemplazan el producto. Una confirmación ("SI") no se fija para toda la
+        # combinación, porque el producto de las reglas puede variar por fila (por ejemplo, según la nota).
         mc = maestro_comb.dropna(subset=["producto"])
-        mc = mc[mc["origen"].isin(["humano", "llm"])].drop_duplicates("llave_combinacion", keep="last")
+        corregido = mc.get("corregido", pd.Series(False, index=mc.index)).astype(str).str.upper().isin(["TRUE", "1", "SI"])
+        mc = mc[mc["origen"].isin(["humano", "llm"]) & corregido].drop_duplicates("llave_combinacion", keep="last")
         mapa = dict(zip(mc["llave_combinacion"], mc["producto"]))
         orig = dict(zip(mc["llave_combinacion"], mc["origen"]))
         m = t["llave_combinacion"].isin(mapa.keys())
@@ -221,6 +240,7 @@ def construir_maestro(t: pd.DataFrame, arts: pd.DataFrame, reglas: dict) -> dict
     a["version"] = reglas["version"]
     c = combinaciones(t)[["llave_combinacion", "articulo_normalizado", "descripcion_ejemplo", "categoria",
                           "subcategoria", "producto", "origen"]].copy()
+    c["corregido"] = False
     c["fecha"] = hoy
     c["version"] = reglas["version"]
     return {"articulos": a, "combinaciones": c}
@@ -295,8 +315,10 @@ def generar_validacion(t: pd.DataFrame, arts: pd.DataFrame, reglas: dict, semill
     }
 
 
-def aplicar_validacion(ruta_validacion: Path | str, ruta_maestro: Path | str) -> dict[str, int]:
-    """Carga las correcciones de la persona al maestro (origen = humano)."""
+def aplicar_validacion(ruta_validacion: Path | str, ruta_maestro: Path | str,
+                       origen_articulos: str = "humano", origen_productos: str = "humano") -> dict[str, int]:
+    """Carga las correcciones al maestro. El origen indica quién validó: "humano" (una persona) o "llm"
+    (revisión asistida por IA, cuando la persona la delega)."""
     art, comb = leer_maestro(ruta_maestro)
     if art is None:
         raise FileNotFoundError(f"No existe el maestro: {ruta_maestro}")
@@ -321,7 +343,7 @@ def aplicar_validacion(ruta_validacion: Path | str, ruta_maestro: Path | str) ->
                 cambios["articulos_corregidos"] += 1
             else:
                 cambios["articulos_confirmados"] += 1
-            art.loc[a, ["origen", "confianza", "fecha"]] = ["humano", "alta", date.today().isoformat()]
+            art.loc[a, ["origen", "confianza", "fecha"]] = [origen_articulos, "alta", date.today().isoformat()]
     comb = comb.set_index("llave_combinacion")
     if "Muestra_productos" in xl.sheet_names:
         v = pd.read_excel(xl, "Muestra_productos", dtype=str).fillna("")
@@ -331,11 +353,11 @@ def aplicar_validacion(ruta_validacion: Path | str, ruta_maestro: Path | str) ->
             if k not in comb.index or ok not in {"SI", "SÍ", "NO"}:
                 continue
             if ok == "NO" and r["Producto corregido"].strip():
-                comb.loc[k, "producto"] = r["Producto corregido"].strip()
+                comb.loc[k, ["producto", "corregido"]] = [r["Producto corregido"].strip(), "True"]
                 cambios["productos_corregidos"] += 1
             else:
                 cambios["productos_confirmados"] += 1
-            comb.loc[k, ["origen", "fecha"]] = ["humano", date.today().isoformat()]
+            comb.loc[k, ["origen", "fecha"]] = [origen_productos, date.today().isoformat()]
     escribir_excel(ruta_maestro, {"articulos": art.reset_index(), "combinaciones": comb.reset_index()})
     return cambios
 
@@ -365,10 +387,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--construir-maestro", action="store_true", help="Escribe maestro_propuesto.xlsx")
     ap.add_argument("--generar-validacion", action="store_true", help="Escribe validacion_taxonomia.xlsx")
     ap.add_argument("--aplicar-validacion", help="Excel de validación devuelto por la persona")
+    ap.add_argument("--origen-articulos", default="humano", choices=["humano", "llm"])
+    ap.add_argument("--origen-productos", default="humano", choices=["humano", "llm"])
     a = ap.parse_args(argv)
 
     if a.aplicar_validacion:
-        cambios = aplicar_validacion(a.aplicar_validacion, a.maestro)
+        cambios = aplicar_validacion(a.aplicar_validacion, a.maestro, a.origen_articulos, a.origen_productos)
         print("Maestro actualizado:", cambios)
         return 0
     if not (a.tabla and a.salida):

@@ -3,7 +3,7 @@
 ## Abiertos
 | # | Pendiente | Quién responde | Afecta a |
 |---|---|---|---|
-| 13 | Validar la taxonomía: 88 artículos (95 % del gasto) y la muestra de 200 productos en `validacion_taxonomia.xlsx`; luego cargarla con `clasificar.py --aplicar-validacion`. | Usuario | Hilos 3 y 5 |
+| 15 | Confirmar la precisión del nivel 3 (producto) con una muestra nueva de 200 en el próximo ciclo (estimación independiente actual: 84.5 %). | Usuario (o revisión asistida) | Hilo 8 |
 | 14 | Asignar (opcional) el segmento UNSPSC a cada categoría, verificando los códigos en la fuente oficial. | Hilo 5 o posterior | Comparaciones externas |
 
 ## Resueltos (2026-09-25)
@@ -14,6 +14,7 @@
 | 3 | Montos exactos en el límite | Pertenecen al nivel inferior (límite inclusivo). |
 | 5 | Ruta de Google Drive | Carpeta "analisis de gastos", id `1mZsi-I-oM9YzQbtjmVRzPI7iB3LG_pXm`. Acceso verificado. |
 | 6 | Rol del supervisor | Es el aprobador de la OC. (Ver pendiente #10.) |
+| 13 | Validación de la taxonomía | Hecha el 2026-09-30: niveles 1–2 por el usuario (4 correcciones); nivel 3 con revisión asistida por IA (ver `docs/taxonomia.md`). |
 | 9 | Monto total de la OC | Aprobado en el Hilo 1: suma más alta de "Monto MN" por factura. OC con facturado > monto + 5 % se marcan para el Hilo 4. |
 | 7 | Subcarpetas en Drive | Creadas el 2026-09-29: `entrada/`, `maestro/`, `historico/`, `salida/` (ids en `config/parametros.yaml`). |
 | 8 | Contradicción de estados | Manda "Estado Factura". Las 1 795 filas en conflicto se consideran pagadas. |
