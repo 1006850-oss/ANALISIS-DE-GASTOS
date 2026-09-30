@@ -191,3 +191,42 @@ LibreOffice no pudo abrir ningún xlsx en este entorno (falla del entorno, inclu
 se validó leyendo el zip y el XML (0 partes mal formadas) y con openpyxl.
 Pruebas: 60 pytest (6 nuevas: totales, claves del modelo en estrella, cifra alterada detectada, sin nombres ni RUC,
 5 hojas en una página, reproducible), todas pasan.
+
+## Hilo 8 – Integración y automatización – 2026-09-30 (cerrado)
+Paso 0: los 8 scripts de los Hilos 1 a 7 existían y las 60 pruebas pasaban.
+Entregas:
+- `ejecutar_ciclo.py`: un comando ejecuta los 8 pasos.
+  - Puntos de parada humanos: validación que BLOQUEA (código 2), descripciones nuevas y Kraljic sin taller (código 3).
+  - Estado reanudable (`estado.json`) y bitácora por ciclo (`log_ejecucion.md`): commit, versiones de parámetros, reglas
+    y maestro, tiempos, advertencias, cuadres y decisiones humanas.
+  - Ventana = 6 semestres hasta el periodo (desde 2015-S1). El plan anual solo se recalcula en los ciclos S2.
+- `historico.py`: guarda cada ciclo como `historico/<periodo>__v<N>` sin sobrescribir y lo compara con el ciclo
+  anterior: cambios en el Pareto, categorías del semestre y alertas nuevas vs. recurrentes (con llave estable).
+- Mejora detectada: los códigos P001… se asignaban por orden alfabético en cada extracto y cambiarían entre ciclos.
+  Ahora se conservan en `maestro/codigos_personas.xlsx` (Drive) y las personas nuevas reciben el número siguiente.
+- Skill `analisis-gastos-compras`:
+  - En el repositorio solo está `skill/analisis-gastos-compras/SKILL.md` (122 líneas).
+  - `empaquetar_skill.py` copia scripts, configuración, referencias y plantilla, valida y genera el ZIP (30 archivos,
+    129 KB).
+  - La `description` tiene 198 caracteres. El centro de ayuda de claude.ai limita a 200 y la plataforma a 1 024; se usó
+    el más estricto.
+- Simulación de dos ciclos con el extracto real (2017-S1 recortado y 2017-S2):
+  - 2017-S1: gasto analizado S/ 191 648 894.55.
+  - 2017-S2: S/ 275 378 383.86.
+  - Gasto del semestre: S/ 53.6 M → S/ 83.7 M.
+  - Clase A: 86 → 81 proveedores. 214 proveedores nuevos en la ventana.
+  - Fraccionamiento: 58 casos nuevos y 154 recurrentes.
+- Evals (ver `docs/evals_skill.md`):
+  1. Cifras oficiales: 18/18.
+  2. Columna renombrada: ✔.
+  3. Descripciones nuevas: ✔.
+  4. Activación: 20/20 en la 4.ª iteración de la `description`.
+- La skill empaquetada corre sola con pandas 2.3 y da las mismas cifras.
+- Dónde ejecutarla (recomendado): Claude Code con Google Drive para escritorio (ver `docs/skill.md`).
+- Automatización recomendada: inicio manual con recordatorio semestral (pendiente #18, sin configurar).
+- Seguridad: el empaquetador detectó un RUC real de la muestra usado como ejemplo en dos documentos. Se reemplazó por un
+  ejemplo ficticio. El historial de git aún lo conserva (pendiente #22).
+- Drive: se subieron los logs, el índice del histórico y el resumen de la comparación. Los archivos grandes van en un
+  ZIP para copiar a mano (pendiente #21).
+
+Pruebas: 69 pytest (9 nuevas), todas pasan.
