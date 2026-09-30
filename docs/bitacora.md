@@ -230,3 +230,12 @@ Entregas:
   ZIP para copiar a mano (pendiente #21).
 
 Pruebas: 69 pytest (9 nuevas), todas pasan.
+
+### Decisiones del usuario al cierre del Hilo 8 (2026-09-30)
+- #18 Automatización: aprobada la opción (a), inicio manual con recordatorio semestral (2.ª semana de enero y de julio).
+  No se configuró ninguna ejecución programada.
+- #19 Dueño del proceso: Jefatura de Compras.
+- #20 Regla de validación de descripciones nuevas: confirmada (todos los artículos nuevos + combinaciones que suman el
+  80 % del gasto nuevo, máximo 200).
+- #16 Taller de Kraljic: conforme con mantener los cuadrantes provisionales hasta el taller.
+- #17 Plazos de las modalidades: de acuerdo con mantener los supuestos hasta tener los reales.

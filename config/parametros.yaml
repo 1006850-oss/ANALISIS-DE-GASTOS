@@ -179,7 +179,7 @@ ciclo:
   plan_en_semestre: "S2"
   # Punto de parada humano por descripciones nuevas: se validan TODOS los artículos nuevos y las combinaciones
   # nuevas que suman este % del gasto nuevo (máximo max_combinaciones, las de mayor gasto). El resto entra con la
-  # propuesta de las reglas (origen "regla"). Propuesta del asistente, igual criterio que el 95 % del Hilo 2.
+  # propuesta de las reglas (origen "regla"). Aprobado por el usuario el 2026-09-30.
   validacion_nuevas:
     pct_gasto_combinaciones: 0.80
     max_combinaciones: 200

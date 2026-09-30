@@ -89,7 +89,7 @@ de código.
 3. Reemplazar la carpeta en `~/.claude/skills/`, o volver a subir el ZIP en claude.ai.
 4. En el log de cada ciclo, "Código (commit)" muestra la versión de la skill usada.
 
-## Automatización: opciones y recomendación (Paso 5; no se configura sin aprobación)
+## Automatización: opciones y decisión (Paso 5)
 
 | Opción | Cómo sería | A favor | En contra |
 |---|---|---|---|
@@ -98,14 +98,14 @@ de código.
 | (b2) Power Automate | Un flujo detecta el archivo nuevo en `entrada/` y avisa, o lanza el proceso | Útil para avisar | Ejecutar Python necesita Power Automate Desktop o un servidor. Agrega licencias y mantenimiento para 2 corridas al año |
 | (b3) Rutina programada en la nube (Claude) | Una sesión en la nube corre el ciclo en una fecha fija | Sin computadora encendida | La data confidencial tendría que subirse a la nube; el conector de Drive no es práctico para el xlsx de 13.6 MB; igual se detiene para validar |
 
-**Recomendación: (a) inicio manual con recordatorio en el calendario.**
+**Decisión (aprobada por el usuario el 2026-09-30): (a) inicio manual con recordatorio en el calendario.**
 
 - Con una frecuencia semestral, la automatización ahorra muy poco: el proceso completo tarda alrededor de un minuto.
 - La exportación del ERP es manual.
 - Todo ciclo tiene puntos de decisión humana.
 - La confidencialidad favorece no mover la data.
 
-Pasos, si lo apruebas:
+Pasos (los hace el usuario; no se configuró ninguna ejecución programada):
 
 1. Crear dos eventos recurrentes anuales en tu calendario (2.ª semana de enero y 2.ª semana de julio) llamados
    "Ciclo de análisis de gastos", con la lista de las 4 semanas del manual.

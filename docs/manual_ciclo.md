@@ -74,7 +74,7 @@ Cada decisión (aceptar propuestas, seguir con Kraljic provisional) queda escrit
 
 ## Dueño del proceso, versiones y revisión anual
 
-- **Dueño del proceso**: Jefatura de Compras (propuesta; confirmar). Responde por la ejecución del ciclo, las
+- **Dueño del proceso**: Jefatura de Compras (confirmado por el usuario el 2026-09-30). Responde por la ejecución del ciclo, las
   validaciones y la custodia de `maestro/` (incluye la tabla de códigos de personas, que es confidencial).
 - **Versiones**:
   - Código y reglas: en el repositorio. Al cerrar cada ciclo se crea la etiqueta de git `ciclo-AAAA-SN` sobre el
