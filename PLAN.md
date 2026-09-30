@@ -35,9 +35,13 @@ aquí su entrega.
 | 5 ✅ | Matriz de Kraljic (riesgo provisional hasta el taller de expertos) | 2, 3 | `kraljic.py` + plantilla de puntaje de riesgo |
 | 6 ✅ | Plan de compras anual (ejercicio metodológico 2018) | 2, 3 | `proyectar.py` |
 | 7 ✅ | Salidas: Excel con tablero e informe ejecutivo (sin Power BI) | 3 a 6 | `generar_excel.py`, `generar_informe.py`, modelo en estrella |
-| 8 | Integración y automatización (skill) | 0 a 7 | Skill `analisis-gastos-compras` + prueba de un ciclo completo |
+| 8 ✅ | Integración y automatización (skill) | 0 a 7 | `ejecutar_ciclo.py`, `historico.py`, skill `analisis-gastos-compras` (empaquetada con `empaquetar_skill.py`) y evals |
 
 Los hilos 2 y 4 pueden trabajarse en paralelo después del hilo 1.
+
+**Estado (2026-09-30): los 9 hilos están cerrados.** Cada semestre se ejecuta con un solo pedido; ver
+`docs/manual_ciclo.md` (guía del ciclo) y `docs/skill.md` (instalación y dónde ejecutarla). Pendientes abiertos en
+`docs/pendientes.md`.
 
 ## Prompts
 

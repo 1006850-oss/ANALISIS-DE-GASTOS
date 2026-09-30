@@ -108,11 +108,21 @@ def semestre_de(fecha: pd.Series, params: dict) -> pd.Series:
     return out.where(fecha.notna(), pd.NA)
 
 
-def codificar(s: pd.Series, prefijo: str) -> tuple[pd.Series, pd.DataFrame]:
-    """Asigna códigos estables (orden alfabético) a nombres de personas."""
+def codificar(s: pd.Series, prefijo: str, previos: pd.DataFrame | None = None) -> tuple[pd.Series, pd.DataFrame]:
+    """Asigna códigos a nombres de personas (orden alfabético).
+
+    Con `previos` (tabla codigo–nombre de ciclos anteriores) los códigos existentes se conservan y las personas
+    nuevas reciben el número siguiente: así un mismo comprador tiene el mismo código en todos los ciclos."""
     valores = sorted(s.dropna().unique())
-    ancho = max(3, len(str(len(valores))))
-    mapa = {v: f"{prefijo}{i + 1:0{ancho}d}" for i, v in enumerate(valores)}
+    mapa = {}
+    if previos is not None and len(previos):
+        mapa = dict(zip(previos["nombre"].astype(str), previos["codigo"].astype(str)))
+    nums = [int(c[len(prefijo):]) for c in mapa.values() if str(c).startswith(prefijo) and c[len(prefijo):].isdigit()]
+    nuevos = [v for v in valores if v not in mapa]
+    ancho = max(3, len(str(len(mapa) + len(nuevos))), *(len(c) - len(prefijo) for c in mapa.values()))
+    siguiente = max(nums, default=0) + 1
+    for i, v in enumerate(nuevos):
+        mapa[v] = f"{prefijo}{siguiente + i:0{ancho}d}"
     tabla = pd.DataFrame({"codigo": list(mapa.values()), "nombre": list(mapa.keys())})
     return s.map(mapa).astype("string"), tabla
 
@@ -228,7 +238,8 @@ def validar_contenido(df: pd.DataFrame, t: pd.DataFrame, params: dict, historico
 
 # ------------------------------------------------------------------ transformación
 
-def transformar(df: pd.DataFrame, params: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+def transformar(df: pd.DataFrame, params: dict, codigos_previos: pd.DataFrame | None = None
+                ) -> tuple[pd.DataFrame, pd.DataFrame]:
     L = params["limpieza"]
     G = params["gasto"]
     basura = L["textos_basura"]
@@ -285,7 +296,7 @@ def transformar(df: pd.DataFrame, params: dict) -> tuple[pd.DataFrame, pd.DataFr
     comprador = limpiar_texto(df["COMPRADOR"], basura)
     aprobador = limpiar_texto(df["SUPERVISOR"], basura)
     personas = pd.concat([comprador, aprobador]).dropna()
-    _, tabla_codigos = codificar(personas, "P")
+    _, tabla_codigos = codificar(personas, "P", codigos_previos)
     mapa = dict(zip(tabla_codigos["nombre"], tabla_codigos["codigo"]))
     t["comprador_codigo"] = comprador.map(mapa).astype("string")
     t["aprobador_codigo"] = aprobador.map(mapa).astype("string")
@@ -359,7 +370,8 @@ def control_totales(df: pd.DataFrame, t: pd.DataFrame, params: dict) -> pd.DataF
 
 # ------------------------------------------------------------------ proceso
 
-def procesar(df_crudo: pd.DataFrame, params: dict, historico: pd.DataFrame | None = None) -> Resultado:
+def procesar(df_crudo: pd.DataFrame, params: dict, historico: pd.DataFrame | None = None,
+             codigos_previos: pd.DataFrame | None = None) -> Resultado:
     tiempos = {}
     t0 = time.perf_counter()
     df = estandarizar_columnas(df_crudo, params)
@@ -368,7 +380,7 @@ def procesar(df_crudo: pd.DataFrame, params: dict, historico: pd.DataFrame | Non
         return Resultado(None, pd.DataFrame(val), pd.DataFrame(), pd.DataFrame(), tiempos)
 
     df = df[params["limpieza"]["columnas_requeridas"]]
-    t, codigos = transformar(df, params)
+    t, codigos = transformar(df, params, codigos_previos)
     tiempos["transformar_s"] = round(time.perf_counter() - t0, 2)
 
     ctrl = control_totales(df, t, params)
@@ -450,6 +462,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--salida", help="Carpeta de salida (por defecto: <raiz_datos>/salida/<periodo>)")
     ap.add_argument("--parametros", default=str(PARAMETROS_DEFECTO))
     ap.add_argument("--historico", help="Parquet de un ciclo anterior para detectar valores nuevos (opcional)")
+    ap.add_argument("--codigos", help="codigos_personas.xlsx de ciclos anteriores (mantiene los mismos códigos)")
     a = ap.parse_args(argv)
 
     params = cargar_parametros(a.parametros)
@@ -457,7 +470,8 @@ def main(argv: list[str] | None = None) -> int:
     crudo = leer_entrada(a.entrada)
     t_lectura = round(time.perf_counter() - t0, 2)
     hist = pd.read_parquet(a.historico) if a.historico else None
-    res = procesar(crudo, params, hist)
+    previos = pd.read_excel(a.codigos, dtype=str) if a.codigos and Path(a.codigos).exists() else None
+    res = procesar(crudo, params, hist, previos)
     res.tiempos["lectura_s"] = t_lectura
     carpeta = Path(a.salida) if a.salida else carpeta_salida_defecto(params, a.periodo)
     rutas = guardar(res, carpeta, params, a.entrada, a.periodo)

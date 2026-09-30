@@ -29,7 +29,7 @@ Cada validación debe clasificarse como **BLOQUEA** (el proceso se detiene y exp
 
 ## Paso 2 – Limpieza y transformación
 Aplica primero `mapeo_columnas` de `config/parametros.yaml` (encabezado vacío → "Año", "Nota", "Empleado" → "COMPRADOR", "Supervisor" → "SUPERVISOR"). Problemas ya detectados (verifícalos tú mismo; cifras de la data real en `docs/perfil_extracto_real.md`):
-- "Proveedor" trae el RUC pegado al nombre (ej. `20267879398 PORTALAMPARAS S.A.C.`) → separar en `ruc` y `proveedor`.
+- "Proveedor" trae el RUC pegado al nombre (ej. `20XXXXXXXXX PROVEEDOR EJEMPLO S.A.C.`) → separar en `ruc` y `proveedor`.
 - "Clase" es una glosa de palabras clave; mezcla texto y año (`Ampliaciones 2018`, `Obras Nuevas`) y está vacía en 7 filas → separar en `clase_glosa` y `clase_anio`; marcar vacíos.
 - "Articulo" es la categoría de compra; mezcla mayúsculas y prefijos (`Ventas : Alojamiento`, `VENTAS : Materiales...`) → crear `articulo_normalizado` sin perder el original.
 - "N° de Factura" tiene formatos mixtos (`FA 0001-000311`, `FA-...`) → normalizar antes de buscar duplicados.

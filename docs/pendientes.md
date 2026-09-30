@@ -6,6 +6,11 @@
 | 15 | Confirmar la precisión del nivel 3 (producto) con una muestra nueva de 200 en el próximo ciclo (estimación independiente actual: 84.5 %). | Usuario (o revisión asistida) | Hilo 8 |
 | 17 | Reemplazar los plazos supuestos de cada modalidad (1/2/3 semanas, licitación 8, obras 10) por los reales. | Usuario | Hilo 6 |
 | 16 | Taller de expertos de Kraljic: completar `kraljic_taller.xlsx` (prioridad: 23 unidades "Alta" y 8 "Media") y recalcular con `kraljic.py --taller`. | Usuario + expertos | Hilos 6 y 7 |
+| 18 | Aprobar la opción de automatización (recomendada: inicio manual con recordatorio semestral; ver `docs/skill.md`). No se configura nada sin aprobación. | Usuario | Hilo 8 |
+| 19 | Confirmar el dueño del proceso (propuesta: Jefatura de Compras) y quién valida las descripciones nuevas. | Usuario | Manual del ciclo |
+| 20 | Confirmar la regla de validación de descripciones nuevas del ciclo (todos los artículos nuevos + combinaciones que suman el 80 % del gasto nuevo, máx. 200). Propuesta del asistente. | Usuario | Hilo 8 |
+| 21 | Copiar a Drive los resultados de los ciclos simulados (`salida/2017-S1`, `salida/2017-S2`, `historico/`): el conector de Drive solo permitió subir los archivos de texto. | Usuario | Hilo 8 |
+| 22 | El historial de git conserva el RUC y la razón social de la muestra que estaban como ejemplo en `docs/diccionario_datos.md` y `prompts/hilo_1.md` (ya reemplazados por un ejemplo ficticio). Decidir si se reescribe el historial. | Usuario | Repositorio |
 | 14 | Asignar (opcional) el segmento UNSPSC a cada categoría, verificando los códigos en la fuente oficial. | Hilo 5 o posterior | Comparaciones externas |
 
 ## Resueltos (2026-09-25)

@@ -19,6 +19,7 @@ from datetime import date
 from pathlib import Path
 
 import pandas as pd
+import yaml
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 
@@ -26,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from generar_excel import cargar_tablas  # noqa: E402
 
 AZUL, GRIS = "2A78D6", "F0EFEC"
+RAIZ = Path(__file__).resolve().parents[1]
 
 
 # --------------------------------------------------------------------------- formato de cifras
@@ -120,21 +122,22 @@ def calcular_cifras(T: dict[str, pd.DataFrame]) -> Cifras:
     c.add("conc_prov", len(conc), f_int, "alert.concentracion_comprador"); c.add("conc_monto", conc["gasto"].sum(), f_m,
                                                                              "alert.concentracion_comprador.gasto")
     c.add("giro", len(T["alert.giro_proveedor"]), f_int, "alert.giro_proveedor")
-    # Plan
-    pl = T["plan.plan_plan"]
-    pp = pl[pl["segmento"] != "Por proyecto"]
-    cons = pp[(pp["modalidad_si_se_consolida"] == "Licitación") & (pp["modalidad_por_oc_tipica"] != "Licitación")]
-    c.add("cons_unidades", len(cons), f_int, "plan.plan_plan (consolidables)")
-    c.add("cons_monto", cons["linea_base"].sum(), f_m, "plan.plan_plan.linea_base (consolidables)")
-    c.add("cons_oc", cons["n_oc_ultimo_anio"].sum(), f_int, "plan.plan_plan.n_oc_ultimo_anio (consolidables)")
-    c.add("plan_base", pp["linea_base"].sum(), f_m, "plan.plan_plan.linea_base (sin obras)")
-    val = T["plan.plan_validacion"]
-    v = val[val["metodo"].str.startswith("Gasto por sede") & val["segmento"].isin(["Recurrente", "Variable"])]
-    cal = T["plan.plan_calendario"]
-    ini = cal.loc[cal["segmento"] == "Recurrente", "inicio_proceso"].min()
-    c.d["inicio_rec"] = {"cifra": "inicio_rec", "texto": ini.strftime("%d/%m/%Y") if pd.notna(ini) else "(sin dato)",
-                         "valor": float("nan"), "fuente": "plan.plan_calendario[Recurrente].inicio_proceso (mínimo)"}
-    c.add("plan_error", v["error_anual_pct"].abs().max() if len(v) else 0, f_pct, "plan.plan_validacion (máx. error anual)")
+    # Plan (solo en ciclos que lo recalculan)
+    if "plan.plan_plan" in T:
+        pl = T["plan.plan_plan"]
+        pp = pl[pl["segmento"] != "Por proyecto"]
+        cons = pp[(pp["modalidad_si_se_consolida"] == "Licitación") & (pp["modalidad_por_oc_tipica"] != "Licitación")]
+        c.add("cons_unidades", len(cons), f_int, "plan.plan_plan (consolidables)")
+        c.add("cons_monto", cons["linea_base"].sum(), f_m, "plan.plan_plan.linea_base (consolidables)")
+        c.add("cons_oc", cons["n_oc_ultimo_anio"].sum(), f_int, "plan.plan_plan.n_oc_ultimo_anio (consolidables)")
+        c.add("plan_base", pp["linea_base"].sum(), f_m, "plan.plan_plan.linea_base (sin obras)")
+        val = T["plan.plan_validacion"]
+        v = val[val["metodo"].str.startswith("Gasto por sede") & val["segmento"].isin(["Recurrente", "Variable"])]
+        cal = T["plan.plan_calendario"]
+        ini = cal.loc[cal["segmento"] == "Recurrente", "inicio_proceso"].min()
+        c.d["inicio_rec"] = {"cifra": "inicio_rec", "texto": ini.strftime("%d/%m/%Y") if pd.notna(ini) else "(sin dato)",
+                             "valor": float("nan"), "fuente": "plan.plan_calendario[Recurrente].inicio_proceso (mínimo)"}
+        c.add("plan_error", v["error_anual_pct"].abs().max() if len(v) else 0, f_pct, "plan.plan_validacion (máx. error anual)")
     # Kraljic
     kr = T["kraljic.kraljic_resumen"].set_index("cuadrante").reindex(
         ["Estratégico", "Apalancamiento", "Cuello de botella", "No crítico"]).fillna(0)
@@ -146,8 +149,9 @@ def calcular_cifras(T: dict[str, pd.DataFrame]) -> Cifras:
 
 # --------------------------------------------------------------------------- contenido
 
-def contenido(c: Cifras, T: dict[str, pd.DataFrame], periodo: str) -> dict[str, list]:
+def contenido(c: Cifras, T: dict[str, pd.DataFrame], periodo: str, ventana: str | None = None) -> dict[str, list]:
     """Cada hoja: lista de bloques (titulo, texto) o ('tabla', DataFrame)."""
+    tiene_plan = "cons_monto" in c.d
     ku = T["kraljic.kraljic_unidades"]
     def principales(q, n=4):
         return ", ".join(ku[ku["cuadrante"] == q].nlargest(n, "gasto")["unidad"].str.replace("Obras › ", "", regex=False))
@@ -181,15 +185,17 @@ def contenido(c: Cifras, T: dict[str, pd.DataFrame], periodo: str) -> dict[str, 
              f"El gasto analizado fue {c['gasto']} y creció {c['crecimiento']} entre el primer y el último año "
              f"({c['gasto_primer_anio']} → {c['gasto_ultimo_anio']}). Está muy concentrado: {c['prov_a']} proveedores "
              f"concentran el {c['pct_gasto_a']} del gasto y las obras representan el {c['pct_obras']}. Se detectaron "
-             f"{c['alertas_alta']} señales de control de prioridad alta y una oportunidad de consolidar compras por "
-             f"{c['cons_monto']} que hoy se hacen en {c['cons_oc']} órdenes pequeñas."),
+             f"{c['alertas_alta']} señales de control de prioridad alta"
+             + (f" y una oportunidad de consolidar compras por {c['cons_monto']} que hoy se hacen en {c['cons_oc']} "
+                "órdenes pequeñas." if tiene_plan else ".")),
             ("Tres decisiones que se proponen",
              f"1) Separar funciones: que el aprobador de la OC sea distinto del comprador desde el nivel 2 "
              f"(hoy {c['auto_oc']} OC de nivel 2 o más se registran como autoaprobadas, incluidas {c['auto_n45']} de "
              f"{c['oc_n45']} OC de niveles 4 y 5).\n"
-             f"2) Consolidar {c['cons_unidades']} tipos de compra en procesos anuales (licitación o acuerdo marco), "
-             f"con catálogo para las sedes.\n"
-             f"3) Poner un tope y una aprobación previa a los adicionales de obra ({c['adic_pct']} del gasto en obras) "
+             + (f"2) Consolidar {c['cons_unidades']} tipos de compra en procesos anuales (licitación o acuerdo marco), "
+                "con catálogo para las sedes.\n" if tiene_plan else
+                f"2) Homologar proveedores y usar catálogos: {c['prov_una_oc']} proveedores tuvieron una sola OC.\n")
+             + f"3) Poner un tope y una aprobación previa a los adicionales de obra ({c['adic_pct']} del gasto en obras) "
              f"y revisar los {c['frac_alta']} casos de posible fraccionamiento de prioridad alta."),
             ("Indicadores clave", "tabla_kpi"),
         ],
@@ -211,7 +217,8 @@ def contenido(c: Cifras, T: dict[str, pd.DataFrame], periodo: str) -> dict[str, 
             ("1. Consolidar compras",
              f"{c['cons_unidades']} tipos de compra ({c['cons_monto']}) se compraron en {c['cons_oc']} OC pequeñas por "
              "cotización, pero su volumen anual corresponde a licitación según la política. Proponer contratos anuales o "
-             "acuerdos marco con catálogo (no aplica, por ejemplo, a alquileres de locales distintos)."),
+             "acuerdos marco con catálogo (no aplica, por ejemplo, a alquileres de locales distintos)."
+             if tiene_plan else "Se evalúa con el plan anual de compras (ciclos S2)."),
             ("2. Reducir proveedores ocasionales",
              f"{c['prov_una_oc']} proveedores ({c['pct_prov_una_oc']}) tuvieron una sola OC: homologar y usar proveedores "
              "de catálogo."),
@@ -233,16 +240,17 @@ def contenido(c: Cifras, T: dict[str, pd.DataFrame], periodo: str) -> dict[str, 
             ("Estrategias por tipo de compra (matriz de Kraljic)",
              "Cuadrantes PROVISIONALES: el riesgo usa una propuesta de IA hasta el taller de expertos."),
             ("Matriz", kr_tab),
-            ("Plan de compras (línea base, ejercicio metodológico)",
-             f"Línea base de compras recurrentes, variables y esporádicas: {c['plan_base']} (54 sedes, sin inflación). Error del método "
+            ("Plan de compras (línea base)",
+             f"Línea base de compras recurrentes, variables y esporádicas: {c['plan_base']} ({getattr(c, 'sedes_plan', '')} sedes del plan, sin inflación). Error del método "
              f"en la validación hacia atrás: hasta {c['plan_error']} en el total anual. Las obras se toman del plan de obras "
-             f"aprobado. Los procesos de las compras recurrentes deben iniciar el {c['inicio_rec']} para regir desde enero."),
+             f"aprobado. Los procesos de las compras recurrentes deben iniciar el {c['inicio_rec']} para regir desde enero." if tiene_plan else
+             "El plan anual de compras se recalcula en el ciclo S2; en este ciclo se mantiene el plan vigente."),
         ],
         "5. Alcance y límites": [
             ("Alcance, límites y próximos pasos", ""),
-            ("Alcance", f"Órdenes de compra y facturas del ERP, facturas {periodo}. Gasto = monto facturado (sin doble conteo)."),
+            ("Alcance", f"Órdenes de compra y facturas del ERP, facturas {ventana or periodo}. Gasto = monto facturado (sin doble conteo)."),
             ("Límites",
-             "Data hasta 2017. La exportación trae un solo aprobador por OC. La clasificación de productos tiene un acierto "
+             f"Data hasta {periodo}. La exportación trae un solo aprobador por OC. La clasificación de productos tiene un acierto "
              "estimado de 84.5 % (categorías validadas por el usuario). Kraljic provisional hasta el taller. Plazos de las "
              "modalidades de compra: supuestos."),
             ("Próximos pasos",
@@ -283,7 +291,7 @@ def escribir_informe(bloques: dict[str, list], c: Cifras, ruta: Path) -> Path:
                         ("Proveedores / clase A", f"{c['proveedores']} / {c['prov_a']}"),
                         ("% del gasto en clase A", c["pct_gasto_a"]), ("% del gasto en obras", c["pct_obras"]),
                         ("Señales de control de prioridad alta", c["alertas_alta"]),
-                        ("Compras consolidables", c["cons_monto"])]
+                        ] + ([("Compras consolidables", c["cons_monto"])] if "cons_monto" in c.d else [])
                 for etiqueta, valor in kpis:
                     ws.cell(row=fila, column=1, value=etiqueta).fill = PatternFill("solid", fgColor=GRIS)
                     v = ws.cell(row=fila, column=2, value=valor)
@@ -325,14 +333,18 @@ def verificar_informe(ruta: Path, c: Cifras) -> list[str]:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Informe ejecutivo (Hilo 7).")
-    for d in ["descriptivo", "alertas", "kraljic", "plan"]:
+    for d in ["descriptivo", "alertas", "kraljic"]:
         ap.add_argument(f"--{d}", required=True)
+    ap.add_argument("--plan", help="Carpeta del Hilo 6 (opcional: el plan anual se recalcula en los ciclos S2)")
+    ap.add_argument("--config-plan", default=str(RAIZ / "config" / "plan_compras.yaml"))
     ap.add_argument("--periodo", required=True)
+    ap.add_argument("--ventana", help="Texto de la ventana analizada, ej. '2015-S1 a 2017-S2'")
     ap.add_argument("--salida", required=True)
     a = ap.parse_args(argv)
     T = cargar_tablas({"desc": a.descriptivo, "alert": a.alertas, "kraljic": a.kraljic, "plan": a.plan})
     c = calcular_cifras(T)
-    ruta = escribir_informe(contenido(c, T, a.periodo), c, Path(a.salida) / f"informe_ejecutivo_{a.periodo}.xlsx")
+    c.sedes_plan = yaml.safe_load(open(a.config_plan, encoding="utf-8"))["sedes"]["plan"]
+    ruta = escribir_informe(contenido(c, T, a.periodo, a.ventana), c, Path(a.salida) / f"informe_ejecutivo_{a.periodo}.xlsx")
     c.tabla().to_excel(Path(a.salida) / "informe_trazabilidad.xlsx", index=False)
     problemas = verificar_informe(ruta, c)
     print("Generado:", ruta)

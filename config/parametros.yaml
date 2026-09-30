@@ -167,3 +167,23 @@ volumen:
   registros_por_semestre_aprox: 17000
   registros_extracto_historico: 103050
   formato_entrada: "xlsx"
+
+ciclo:
+  # Orquestador del ciclo semestral (Hilo 8, scripts/ejecutar_ciclo.py).
+  # Ventana del análisis: los últimos N semestres hasta el periodo del ciclo (6 = 3 años, igual que 2015-S1..2017-S2),
+  # sin empezar antes de periodo_minimo (2014 tiene poca data y no se muestra: decisión 2026-09-29).
+  semestres_ventana: 6
+  periodo_minimo: "2015-S1"
+  # El plan anual de compras (Hilo 6) se recalcula solo en el ciclo de este semestre, con los 3 años completos
+  # de la ventana; en el otro ciclo se mantiene el plan vigente.
+  plan_en_semestre: "S2"
+  # Punto de parada humano por descripciones nuevas: se validan TODOS los artículos nuevos y las combinaciones
+  # nuevas que suman este % del gasto nuevo (máximo max_combinaciones, las de mayor gasto). El resto entra con la
+  # propuesta de las reglas (origen "regla"). Propuesta del asistente, igual criterio que el 95 % del Hilo 2.
+  validacion_nuevas:
+    pct_gasto_combinaciones: 0.80
+    max_combinaciones: 200
+  # Archivos que viven en la carpeta "maestro" de Drive (cambian cada ciclo; NO van en el repositorio ni en la skill).
+  maestro_archivo: "maestro_categorias.xlsx"
+  codigos_archivo: "codigos_personas.xlsx"
+  kraljic_taller_archivo: "kraljic_taller_completado.xlsx"

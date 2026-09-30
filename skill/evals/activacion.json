@@ -1,0 +1,22 @@
+[
+  {"query": "necesito el análisis de gastos del semestre", "should_trigger": true},
+  {"query": "ya tengo el extracto del ERP de este semestre (entrada/extracto_2026-S2.xlsx), corre todo el análisis de compras como el semestre pasado", "should_trigger": true},
+  {"query": "hazme el Pareto de proveedores y revisa si hay compras fraccionadas con la data de compras 2026-S1 que está en la carpeta de drive", "should_trigger": true},
+  {"query": "Quiero actualizar la matriz de Kraljic y el plan de compras del próximo año con el extracto de OC y facturas que subí", "should_trigger": true},
+  {"query": "Run the spend analysis for 2026-S2 with the new ERP purchase orders export", "should_trigger": true},
+  {"query": "toca el cierre semestral de compras: limpiar el extracto, clasificar, sacar alertas y el informe para el gerente general", "should_trigger": true},
+  {"query": "ya validé las descripciones nuevas en validar_nuevas.xlsx, continúa con el ciclo de análisis de gastos 2026-S2", "should_trigger": true},
+  {"query": "compara el gasto de compras de este semestre con el anterior: proveedores que suben de clase ABC y alertas nuevas", "should_trigger": true},
+  {"query": "prepara el informe ejecutivo de compras para el CEO con el extracto de órdenes de compra de enero a junio", "should_trigger": true},
+  {"query": "revisa autoaprobaciones y posibles facturas duplicadas en las compras de los colegios de este semestre, el extracto del ERP está en entrada/", "should_trigger": true},
+  {"query": "¿Qué es la matriz de Kraljic? explícamela con un ejemplo para mi clase de dirección de proyectos", "should_trigger": false},
+  {"query": "Hazme un presupuesto personal de gastos del hogar en Excel para este mes, gano 6000 soles", "should_trigger": false},
+  {"query": "Compara estas tres cotizaciones de supervisión de obra (A: 120k, B: 98k, C: 105k) y dime cuál adjudicar", "should_trigger": false},
+  {"query": "Escribe una política de compras para un colegio con niveles de aprobación por monto", "should_trigger": false},
+  {"query": "grafica en un diagrama de Pareto los defectos de calidad de esta tabla: rayado 40, abolladura 25, color 10, otros 5", "should_trigger": false},
+  {"query": "Explícame qué es spend analysis y qué indicadores suele usar un área de compras", "should_trigger": false},
+  {"query": "Arma el cronograma de mi proyecto de implementación del ERP con hitos y ruta crítica", "should_trigger": false},
+  {"query": "tengo un csv de ventas por tienda (ventas_2025.csv), dime cuáles tiendas venden más y haz un ranking", "should_trigger": false},
+  {"query": "Redacta un correo al proveedor pidiendo la factura pendiente de la OC 4512", "should_trigger": false},
+  {"query": "Calcula el HHI de este mercado: participaciones 30%, 25%, 20%, 15% y 10%", "should_trigger": false}
+]

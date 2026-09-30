@@ -4,4 +4,5 @@ openpyxl>=3.1
 python-calamine>=0.2   # lectura rápida de xlsx (opcional; si falta se usa openpyxl)
 pyarrow>=15            # Parquet
 pyyaml>=6.0
+matplotlib>=3.8     # gráficos PNG (Hilos 3 y 5)
 pytest>=8.0

@@ -20,7 +20,7 @@ Perfil completo del extracto real: `docs/perfil_extracto_real.md`.
 | 2 | Mes | entero | Sí | Mes de la fecha de OC | Control | Coincide siempre con "Fecha de OC" |
 | 3 | Fecha de OC | fecha | Sí | Fecha de emisión de la OC | Fraccionamiento, ciclo OC→factura | Rango jul-2015 a dic-2017 |
 | 4 | N° de Orden de Compra | entero | Sí | Número de la OC | Llave de OC | 23 OC distintas |
-| 5 | Proveedor | texto | Sí | RUC + razón social en un solo campo | Proveedor | Separar: `20267879398 PORTALAMPARAS S.A.C.` → ruc + nombre |
+| 5 | Proveedor | texto | Sí | RUC + razón social en un solo campo | Proveedor | Separar: `20XXXXXXXXX PROVEEDOR EJEMPLO S.A.C.` → ruc + nombre |
 | 6 | Sede | texto | Sí | Colegio / sede de destino | Gasto por sede | 17 sedes |
 | 7 | Moneda | texto | Sí | Moneda de la OC | Conversión | Real: Soles (86 246) y Dolares Americanos (16 804). "Monto facturado" ya viene en soles |
 | 8 | Monto MN | decimal | Sí | Monto de la OC en soles (total o por línea: pendiente #9) | Monto de OC para niveles de aprobación | Muestra: se repite. Real: cambia dentro de la OC en 8 039 OC. NO sumar sin resolver #9 |

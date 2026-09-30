@@ -136,6 +136,24 @@ def grafico_barras(ws, datos_ws, col_cat: int, col_val: int, fila_ini: int, fila
 
 # --------------------------------------------------------------------------- libro
 
+def _tablero_plan(tpl, T: dict) -> None:
+    tpl["A1"] = "Tablero – Plan de compras (línea base, ejercicio metodológico)"
+    tpl["A1"].font = TITULO
+    mens = T["plan.plan_mensual"].groupby(["mes", "mes_nombre"])["linea_base"].sum().reset_index()
+    mens = mens[["mes_nombre", "linea_base"]].rename(columns={"mes_nombre": "Mes", "linea_base": "Línea base"})
+    ini, fin = escribir_tabla(tpl, mens, fila=3, soles=("Línea base",), filtro=False)
+    ch = LineChart()
+    ch.title, ch.legend, ch.height, ch.width = "Línea base mensual (recurrentes + variables, S/)", None, 7.5, 16
+    ch.add_data(Reference(tpl, min_col=2, min_row=ini - 1, max_row=fin), titles_from_data=True)
+    ch.set_categories(Reference(tpl, min_col=1, min_row=ini, max_row=fin))
+    ch.series[0].graphicalProperties.line.solidFill = AZUL
+    ch.series[0].graphicalProperties.line.width = 25000
+    tpl.add_chart(ch, "D3")
+    seg = T["plan.plan_plan"].groupby("segmento").agg(Unidades=("unidad", "size"), Linea_base=("linea_base", "sum")).reset_index()
+    escribir_tabla(tpl, seg.rename(columns={"segmento": "Segmento", "Linea_base": "Línea base"}), fila=19,
+                   soles=("Línea base",), enteros=("Unidades",), filtro=False)
+
+
 def generar_resultados(T: dict[str, pd.DataFrame], calidad: pd.DataFrame, periodo: str, ruta: Path) -> Path:
     wb = Workbook()
     ws = wb.active
@@ -220,23 +238,14 @@ def generar_resultados(T: dict[str, pd.DataFrame], calidad: pd.DataFrame, period
         img.width, img.height = img.width * 0.45, img.height * 0.45
         tk.add_image(img, "G3")
 
-    # ---------------- Tablero Plan
+    # ---------------- Tablero Plan (solo si el ciclo trae plan: el plan anual se actualiza en los ciclos S2)
+    tiene_plan = "plan.plan_plan" in T
     tpl = wb.create_sheet("Tablero_Plan")
-    tpl["A1"] = "Tablero – Plan de compras (línea base, ejercicio metodológico)"
-    tpl["A1"].font = TITULO
-    mens = T["plan.plan_mensual"].groupby(["mes", "mes_nombre"])["linea_base"].sum().reset_index()
-    mens = mens[["mes_nombre", "linea_base"]].rename(columns={"mes_nombre": "Mes", "linea_base": "Línea base"})
-    ini, fin = escribir_tabla(tpl, mens, fila=3, soles=("Línea base",), filtro=False)
-    ch = LineChart()
-    ch.title, ch.legend, ch.height, ch.width = "Línea base mensual (recurrentes + variables, S/)", None, 7.5, 16
-    ch.add_data(Reference(tpl, min_col=2, min_row=ini - 1, max_row=fin), titles_from_data=True)
-    ch.set_categories(Reference(tpl, min_col=1, min_row=ini, max_row=fin))
-    ch.series[0].graphicalProperties.line.solidFill = AZUL
-    ch.series[0].graphicalProperties.line.width = 25000
-    tpl.add_chart(ch, "D3")
-    seg = T["plan.plan_plan"].groupby("segmento").agg(Unidades=("unidad", "size"), Linea_base=("linea_base", "sum")).reset_index()
-    escribir_tabla(tpl, seg.rename(columns={"segmento": "Segmento", "Linea_base": "Línea base"}), fila=19,
-                   soles=("Línea base",), enteros=("Unidades",), filtro=False)
+    if not tiene_plan:
+        tpl["A1"] = "Plan de compras: no se recalcula en este ciclo (el plan anual se actualiza en los ciclos S2)."
+        tpl["A1"].font = TITULO
+    else:
+        _tablero_plan(tpl, T)
 
     # ---------------- Detalle
     p = T["desc.pareto_proveedores"].drop(columns=["ruc"], errors="ignore")
@@ -253,9 +262,10 @@ def generar_resultados(T: dict[str, pd.DataFrame], calidad: pd.DataFrame, period
     hoja_datos(wb, "Alertas_resumen", T["alert.resumen"], "Hilo 4 – detalle completo en alertas.xlsx", soles=("monto_soles",))
     hoja_datos(wb, "Kraljic_unidades", T["kraljic.kraljic_unidades"].drop(columns=["justificacion_ia"], errors="ignore"),
                "Hilo 5 (provisional)", soles=("gasto",), pct=("pct_gasto", "pct_acumulado"))
-    hoja_datos(wb, "Plan_anual", T["plan.plan_plan"], "Hilo 6 (ejercicio metodológico)",
-               soles=("linea_base", "rango_min", "rango_max", "tendencia_comparacion", "oc_tipica"))
-    hoja_datos(wb, "Calendario", T["plan.plan_calendario"], "Hilo 6", soles=("linea_base",))
+    if tiene_plan:
+        hoja_datos(wb, "Plan_anual", T["plan.plan_plan"], "Hilo 6 (ejercicio metodológico)",
+                   soles=("linea_base", "rango_min", "rango_max", "tendencia_comparacion", "oc_tipica"))
+        hoja_datos(wb, "Calendario", T["plan.plan_calendario"], "Hilo 6", soles=("linea_base",))
     hoja_datos(wb, "Control_calidad", calidad, "Hilo 1 – validaciones de la exportación")
     ctrl_df = T["desc.control"]
     ws_c = wb["Control_calidad"]
@@ -313,7 +323,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--descriptivo", required=True)
     ap.add_argument("--alertas", required=True)
     ap.add_argument("--kraljic", required=True)
-    ap.add_argument("--plan", required=True)
+    ap.add_argument("--plan", help="Carpeta del Hilo 6 (opcional: solo en ciclos S2)")
     ap.add_argument("--tabla", help="tabla_clasificada.parquet (para el modelo en estrella)")
     ap.add_argument("--calidad", help="reporte_calidad.xlsx del Hilo 1")
     ap.add_argument("--periodo", required=True)

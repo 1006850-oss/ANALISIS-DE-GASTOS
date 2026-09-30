@@ -1,0 +1,37 @@
+{
+  "skill_name": "analisis-gastos-compras",
+  "evals": [
+    {
+      "id": 1,
+      "name": "ciclo-normal-extracto-real",
+      "prompt": "Necesito el análisis de gastos del semestre 2017-S2 con el extracto DATA TOTAL SOLO.xlsx",
+      "expected_output": "Ciclo completo (código 0 tras la decisión de Kraljic); todos los cuadres OK; cifras iguales a las oficiales de la bitácora",
+      "files": ["DATA TOTAL SOLO.xlsx (real, solo en Drive; nunca en el repositorio)"],
+      "assertions": ["verificar_ciclo_oficial.py: las 18 cifras coinciden", "log_ejecucion.md: cuadres OK y cifras del informe verificadas"]
+    },
+    {
+      "id": 2,
+      "name": "columna-renombrada",
+      "prompt": "Necesito el análisis de gastos del semestre 2017-S2. El extracto del ERP está en raiz/entrada/extracto_malo.xlsx y la carpeta de datos de Drive es raiz/",
+      "expected_output": "Se detiene con código 2, explica qué columna falta, propone corregir la exportación o el mapeo, y no cambia nada por su cuenta",
+      "files": ["extracto sintético con 'Descripcion' renombrada a 'Detalle'"],
+      "assertions": ["Invoca la skill sin que la nombren", "Termina con código 2", "Nombra la columna faltante", "No edita parametros.yaml sin permiso", "No abre el extracto"]
+    },
+    {
+      "id": 3,
+      "name": "descripciones-nuevas",
+      "prompt": "Necesito el análisis de gastos del semestre 2017-S2 ... (turno 2, en otra conversación:) Ya validé las descripciones nuevas: validar_nuevas_completado.xlsx. Para Kraljic sigue con la propuesta provisional.",
+      "expected_output": "Turno 1: se detiene y pide validar SOLO las nuevas, sin usar --aceptar-propuestas. Turno 2: aplica la validación al maestro, registra Kraljic provisional y termina el ciclo",
+      "files": ["extracto sintético con 1 artículo y 5 descripciones nuevas"],
+      "assertions": ["Turno 1 termina en código 3 en 2_clasificacion", "validar_nuevas.xlsx trae solo lo nuevo", "No acepta propuestas por su cuenta", "Turno 2 termina en código 0 con la corrección aplicada al maestro"]
+    },
+    {
+      "id": 4,
+      "name": "activacion-frase-natural",
+      "prompt": "Ver activacion.json (10 frases que deben activarla y 10 casi iguales que no)",
+      "expected_output": "Se activa en las 10 frases de análisis y no en las 10 de teoría u otros temas",
+      "files": [],
+      "assertions": ["Tasa de activación ≥ 50 % en las 10 positivas y < 50 % en las 10 negativas (run_eval.py de skill-creator)"]
+    }
+  ]
+}

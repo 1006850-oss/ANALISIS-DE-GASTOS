@@ -75,3 +75,21 @@ python scripts/generar_informe.py --descriptivo <dir H3> --alertas <dir H4> --kr
 Salidas: `resultados_<periodo>.xlsx` (tablero en Excel + detalle), `tablero/*.parquet` (modelo en estrella),
 `informe_ejecutivo_<periodo>.xlsx` (5 hojas para el CEO) e `informe_trazabilidad.xlsx`. `generar_informe.py` termina con
 error si alguna cifra del informe no coincide con su fuente. Ver `docs/tablero.md` y `docs/informe.md`.
+
+## Hilo 8 – `ejecutar_ciclo.py`, `historico.py` y `empaquetar_skill.py`
+
+```bash
+# Ciclo completo con un solo comando (reanuda si se detuvo en un punto de parada)
+python scripts/ejecutar_ciclo.py --entrada <extracto.xlsx> --periodo 2026-S2 --raiz <carpeta de Drive> \
+       [--validacion validar_nuevas.xlsx | --aceptar-propuestas] [--taller kraljic_taller.xlsx | --kraljic-provisional] \
+       [--reiniciar]
+# Histórico (lo usa el orquestador; también se puede llamar solo)
+python scripts/historico.py agregar --ciclo <raiz>/salida/2026-S2 --historico <raiz>/historico --periodo 2026-S2
+python scripts/historico.py comparar --historico <raiz>/historico --actual 2026-S2 --salida <carpeta>
+# Skill: arma dist/analisis-gastos-compras/ y el ZIP desde el repositorio
+python scripts/empaquetar_skill.py
+```
+
+Códigos de salida del orquestador: 0 completo · 2 una validación BLOQUEA · 3 punto de parada humano · 1 error.
+Salidas en `<raiz>/salida/<periodo>/`: `1_limpieza` … `8_historico`, `estado.json`, `log_ejecucion.md`,
+`parametros_ciclo.yaml`. Parámetros del ciclo en `config/parametros.yaml > ciclo`. Ver `docs/manual_ciclo.md`.
