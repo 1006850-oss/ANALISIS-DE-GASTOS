@@ -4,6 +4,7 @@
 | # | Pendiente | Quién responde | Afecta a |
 |---|---|---|---|
 | 15 | Confirmar la precisión del nivel 3 (producto) con una muestra nueva de 200 en el próximo ciclo (estimación independiente actual: 84.5 %). | Usuario (o revisión asistida) | Hilo 8 |
+| 16 | Taller de expertos de Kraljic: completar `kraljic_taller.xlsx` (prioridad: 23 unidades "Alta" y 8 "Media") y recalcular con `kraljic.py --taller`. | Usuario + expertos | Hilos 6 y 7 |
 | 14 | Asignar (opcional) el segmento UNSPSC a cada categoría, verificando los códigos en la fuente oficial. | Hilo 5 o posterior | Comparaciones externas |
 
 ## Resueltos (2026-09-25)

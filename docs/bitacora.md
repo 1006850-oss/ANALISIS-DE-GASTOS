@@ -144,3 +144,23 @@ Para el Hilo 7: tablas en `tablas/*.parquet` y `alertas.xlsx`.
 - Mejoras al código: nombres limpios para el "Concepto" (`conceptos` en las reglas), reglas de producto para todas las categorías (`productos_todas`), origen `llm` en el maestro y **solo las correcciones reemplazan el producto** (se detectó y corrigió un defecto que inflaba los adicionales a S/ 28.4 M; prueba de regresión agregada).
 - Cifras con la taxonomía validada: Infraestructura y obras 56.9 % del gasto analizado; Mantenimiento 2.9 %; Seguros 0.55 %; Cuentas contables 3.7 %. Adicionales de obra S/ 15.1 M (9.3 % de obras), 6 sedes y 9 proveedores sobre el umbral. Fraccionamiento: 212 casos (128 alta).
 - Pruebas: 40 pytest, todas pasan. Hilos 3 y 4 regenerados.
+
+## Hilo 5 – Matriz de Kraljic – 2026-09-30 (cerrado; riesgo provisional hasta el taller)
+Decisiones aprobadas por el usuario:
+- Unidad: subcategorías gestionables (sin cuentas contables); Obras abierta por tipo de trabajo → 78 unidades, S/ 265.8 M.
+- Impacto: unidades que suman el 80 % del gasto (16 unidades).
+- Riesgo: 40 % data (HHI > 1 800, ≤ 3 proveedores, principal ≥ 50 %) + 60 % expertos (alternativas 30 %, criticidad 30 %, complejidad 20 %, reemplazo 20 %); alto si ≥ 3.0.
+- Umbral HHI 1 800 (Merger Guidelines 2023 DOJ/FTC; verificado). Hilos 3 y 4 actualizados (antes 2 500).
+
+Fuentes verificadas: Kraljic (1983), HBR 61(5):109–117; Merger Guidelines 2023. El PDF original del artículo no fue accesible (red bloqueada); los objetivos por cuadrante se tomaron de fuentes secundarias (citadas en `docs/estrategias_kraljic.md`).
+
+Resultado provisional (propuesta de IA en las 78 unidades, marcada como tal):
+- Estratégico 3 unidades (12.3 %): adicionales de obra, seguridad y vigilancia, telecomunicaciones.
+- Apalancamiento 13 (68.1 %): obra civil (2.97, cerca del corte), acabados, instalaciones, equipamiento, alquileres, limpieza, mobiliario…
+- Cuello de botella 9 (3.1 %): terrenos, seguros, licencias y permisos, fideicomiso, servicios públicos, acreditación…
+- No crítico 53 (16.5 %).
+- 10 unidades a menos de 0.25 del corte → prioridad en el taller.
+- Hilo 3 con HHI 1 800: 32 de 61 subcategorías gestionables concentradas (45.2 % del gasto); con 2 500 eran 22 (16.5 %).
+
+Pruebas: 47 pytest (7 nuevas), todas pasan.
+Pendiente #16: taller de expertos. Para los Hilos 6 y 7: `tablas/kraljic_unidades.parquet` (cuadrante por unidad).

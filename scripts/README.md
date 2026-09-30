@@ -43,3 +43,13 @@ python scripts/alertas.py --tabla <tabla_clasificada.parquet> --salida <carpeta>
 
 Salidas: `alertas.xlsx` (Resumen + una hoja por alerta con columnas para la investigación), `tablas/*.parquet`,
 `hallazgos_control.md`. Reglas y umbrales en `config/reglas_alertas.yaml`.
+
+## Hilo 5 – `kraljic.py`
+
+```bash
+python scripts/kraljic.py --tabla <tabla_clasificada.parquet> --salida <carpeta> [--taller kraljic_taller.xlsx] \
+       [--plantilla-repo plantillas/kraljic_taller.xlsx]
+```
+
+Salidas: `kraljic.xlsx` (Resumen, Unidades, Categorías, Productos, Estrategias), `kraljic_taller.xlsx` (para los expertos),
+`tablas/kraljic_*.parquet` y `graficos/kraljic_*.png`. Parámetros y propuesta de IA en `config/kraljic.yaml`.

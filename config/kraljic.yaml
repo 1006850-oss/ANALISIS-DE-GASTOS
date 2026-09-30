@@ -1,0 +1,112 @@
+# Parámetros de la matriz de Kraljic (Hilo 5). Aprobados por el usuario el 2026-09-30.
+# Base: Kraljic, P. (1983). Purchasing Must Become Supply Management. Harvard Business Review, 61(5), 109–117.
+version: "2026-09-30"
+
+unidad:
+  # Unidad de análisis: subcategorías gestionables; Infraestructura y obras se abre por tipo de trabajo (producto).
+  categoria_por_producto: "Infraestructura y obras"
+  prefijo: "Obras › "
+
+impacto:
+  # Alto impacto = unidades que, ordenadas por gasto, suman el 80 % (el que cruza el corte es alto).
+  corte_pareto: 0.80
+
+riesgo:
+  peso_datos: 0.40
+  peso_expertos: 0.60
+  corte_alto: 3.0            # escala 1 (bajo) a 5 (alto)
+  margen_sensibilidad: 0.25  # unidades a menos de 0.25 del corte se marcan "cerca del corte" (prioridad en el taller)
+  datos:
+    # Cada indicador vale 5 si se cumple y 1 si no; el puntaje de datos es el promedio.
+    # HHI 1 800: umbral de "mercado altamente concentrado" de las Merger Guidelines 2023 (DOJ/FTC, EE. UU.).
+    # Aquí mide la DEPENDENCIA del gasto propio en pocos proveedores, no la concentración de todo el mercado.
+    hhi_alto: 1800
+    max_proveedores: 3
+    participacion_principal: 0.50
+  criterios_expertos:
+    alternativas: {nombre: "Proveedores alternativos en el mercado", peso: 0.30}
+    criticidad: {nombre: "Criticidad para la operación del colegio", peso: 0.30}
+    complejidad: {nombre: "Complejidad técnica o de especificación", peso: 0.20}
+    reemplazo: {nombre: "Tiempo de reemplazo del proveedor", peso: 0.20}
+
+# Propuesta inicial de puntajes (1 = riesgo bajo, 5 = alto) generada con IA para el taller de expertos.
+# NO es validación: los expertos la confirman o corrigen en plantillas/kraljic_taller.xlsx.
+propuesta_ia:
+  "Obras › Obra civil": {alternativas: 2, criticidad: 4, complejidad: 4, reemplazo: 4, justificacion: "Hay varios contratistas, pero cambiar en plena obra retrasa la apertura de sedes; alta complejidad técnica y contractual."}
+  "Obras › Adicionales de obra": {alternativas: 5, criticidad: 4, complejidad: 3, reemplazo: 5, justificacion: "Los ejecuta casi siempre el contratista de la obra en curso: proveedor cautivo, sin alternativa real."}
+  "Obras › Acabados y carpintería": {alternativas: 2, criticidad: 2, complejidad: 2, reemplazo: 2, justificacion: "Mercado amplio de proveedores; especificación estándar."}
+  "Obras › Instalaciones y especialidades": {alternativas: 2, criticidad: 3, complejidad: 3, reemplazo: 3, justificacion: "Varios proveedores; requiere especialistas certificados y coordinación con la obra."}
+  "Equipamiento general": {alternativas: 2, criticidad: 3, complejidad: 2, reemplazo: 2, justificacion: "Oferta amplia; debe llegar antes del inicio del año escolar."}
+  "Seguridad y vigilancia": {alternativas: 2, criticidad: 4, complejidad: 2, reemplazo: 2, justificacion: "Muchas empresas autorizadas; servicio crítico para la protección de alumnos."}
+  "Alquiler de inmuebles": {alternativas: 4, criticidad: 5, complejidad: 2, reemplazo: 5, justificacion: "El local es específico; cambiarlo implica mudar una sede."}
+  "Telecomunicaciones": {alternativas: 3, criticidad: 4, complejidad: 3, reemplazo: 3, justificacion: "Pocos operadores con cobertura en cada sede; sin conectividad se afecta la operación académica."}
+  "Limpieza": {alternativas: 1, criticidad: 3, complejidad: 1, reemplazo: 2, justificacion: "Mercado amplio; servicio necesario pero fácil de reemplazar."}
+  "Mobiliario": {alternativas: 2, criticidad: 3, complejidad: 2, reemplazo: 3, justificacion: "Varios fabricantes; plazos de fabricación ajustados al inicio de clases."}
+  "Mantenimiento de instalaciones": {alternativas: 1, criticidad: 3, complejidad: 2, reemplazo: 1, justificacion: "Muchos proveedores locales."}
+  "Obras › Coberturas y tensoestructuras": {alternativas: 3, criticidad: 2, complejidad: 3, reemplazo: 3, justificacion: "Pocos proveedores especializados en tensoestructuras."}
+  "Software y licencias": {alternativas: 4, criticidad: 4, complejidad: 3, reemplazo: 4, justificacion: "Dependencia de plataformas específicas (costo de cambio y migración de datos)."}
+  "Obras › Supervisión de obra": {alternativas: 2, criticidad: 4, complejidad: 3, reemplazo: 3, justificacion: "Varias supervisoras; cambiarla a mitad de obra es costoso."}
+  "Obras › Expediente técnico y diseño": {alternativas: 2, criticidad: 4, complejidad: 4, reemplazo: 3, justificacion: "Varios proyectistas; la calidad del expediente define costos y adicionales."}
+  "Publicidad en medios": {alternativas: 2, criticidad: 3, complejidad: 1, reemplazo: 1, justificacion: "Muchos medios y agencias."}
+  "Cursos y materiales de capacitación": {alternativas: 1, criticidad: 2, complejidad: 2, reemplazo: 1, justificacion: "Oferta amplia."}
+  "Obras › Fletes y traslados": {alternativas: 1, criticidad: 2, complejidad: 1, reemplazo: 1, justificacion: "Muchos transportistas."}
+  "Suministros y útiles": {alternativas: 1, criticidad: 2, complejidad: 1, reemplazo: 1, justificacion: "Bienes estándar con muchos proveedores."}
+  "Compra de terrenos": {alternativas: 5, criticidad: 4, complejidad: 4, reemplazo: 5, justificacion: "Cada terreno es único; no hay sustitutos."}
+  "Obras › Demolición y movimiento de tierras": {alternativas: 2, criticidad: 3, complejidad: 2, reemplazo: 2, justificacion: "Varios contratistas con maquinaria."}
+  "Marketing digital": {alternativas: 2, criticidad: 3, complejidad: 2, reemplazo: 2, justificacion: "Varias agencias digitales."}
+  "Desarrollo y soporte de sistemas": {alternativas: 3, criticidad: 4, complejidad: 4, reemplazo: 4, justificacion: "Conocimiento específico de los sistemas propios; cambiar de proveedor toma tiempo."}
+  "Pasajes": {alternativas: 1, criticidad: 2, complejidad: 1, reemplazo: 1, justificacion: "Muchas aerolíneas, empresas de bus y agencias."}
+  "Materiales de admisión y captación": {alternativas: 1, criticidad: 3, complejidad: 1, reemplazo: 2, justificacion: "Oferta amplia; sensible a la temporada de admisión."}
+  "Agasajos y bienestar": {alternativas: 1, criticidad: 1, complejidad: 1, reemplazo: 1, justificacion: "Oferta amplia y no crítica."}
+  "Programas SEA": {alternativas: 3, criticidad: 3, complejidad: 4, reemplazo: 3, justificacion: "Contenidos educativos especializados; pocos proveedores con experiencia."}
+  "Seguros": {alternativas: 3, criticidad: 4, complejidad: 3, reemplazo: 2, justificacion: "Pocas aseguradoras; coberturas necesarias para operar."}
+  "Equipamiento especializado": {alternativas: 3, criticidad: 3, complejidad: 3, reemplazo: 3, justificacion: "Proveedores especializados (sonido, música, educación física)."}
+  "Mejoras y reposiciones": {alternativas: 1, criticidad: 2, complejidad: 2, reemplazo: 1, justificacion: "Muchos proveedores locales."}
+  "Material pedagógico y de laboratorio": {alternativas: 3, criticidad: 4, complejidad: 3, reemplazo: 3, justificacion: "Proveedores especializados; debe estar al inicio del año escolar."}
+  "Capacitación docente": {alternativas: 3, criticidad: 4, complejidad: 3, reemplazo: 3, justificacion: "Formadores especializados en el modelo pedagógico."}
+  "Obras › Licencias y permisos": {alternativas: 4, criticidad: 5, complejidad: 3, reemplazo: 4, justificacion: "Trámites municipales y de defensa civil: sin licencia no se puede operar."}
+  "Fideicomiso y tasaciones": {alternativas: 3, criticidad: 3, complejidad: 3, reemplazo: 3, justificacion: "Pocas entidades fiduciarias; contratos de largo plazo."}
+  "Impresiones y fotocopias": {alternativas: 1, criticidad: 2, complejidad: 1, reemplazo: 1, justificacion: "Muchos proveedores."}
+  "Obras › Otros – Obra sin tipo de intervención": {alternativas: 2, criticidad: 2, complejidad: 2, reemplazo: 2, justificacion: "Trabajos menores de obra."}
+  "Mantenimiento de equipos y mobiliario": {alternativas: 2, criticidad: 3, complejidad: 2, reemplazo: 2, justificacion: "Varios técnicos; algunos equipos requieren servicio de la marca."}
+  "Movilidad local y combustible": {alternativas: 1, criticidad: 1, complejidad: 1, reemplazo: 1, justificacion: "Oferta amplia."}
+  "Call center": {alternativas: 2, criticidad: 3, complejidad: 2, reemplazo: 2, justificacion: "Varios proveedores; clave en la temporada de admisión."}
+  "Obras › Otros – Obra nueva": {alternativas: 2, criticidad: 2, complejidad: 2, reemplazo: 2, justificacion: "Trabajos menores de obra."}
+  "Contable, tributaria y auditoría": {alternativas: 2, criticidad: 3, complejidad: 3, reemplazo: 2, justificacion: "Varias firmas; la auditoría requiere firma calificada."}
+  "Consultoría y asesoría": {alternativas: 2, criticidad: 2, complejidad: 3, reemplazo: 2, justificacion: "Oferta amplia de consultores."}
+  "Legal y notarial": {alternativas: 2, criticidad: 3, complejidad: 3, reemplazo: 2, justificacion: "Varios estudios; algunos casos requieren continuidad."}
+  "Reclutamiento y selección": {alternativas: 1, criticidad: 3, complejidad: 2, reemplazo: 1, justificacion: "Muchas consultoras y portales."}
+  "Obras › Equipamiento deportivo y recreativo": {alternativas: 2, criticidad: 2, complejidad: 2, reemplazo: 2, justificacion: "Varios proveedores."}
+  "Agencias y diseño": {alternativas: 2, criticidad: 2, complejidad: 2, reemplazo: 2, justificacion: "Oferta amplia."}
+  "Viáticos y alojamiento": {alternativas: 1, criticidad: 1, complejidad: 1, reemplazo: 1, justificacion: "Oferta amplia."}
+  "Equipos de cómputo": {alternativas: 1, criticidad: 3, complejidad: 1, reemplazo: 2, justificacion: "Muchos distribuidores; plazos de importación."}
+  "Otros servicios de terceros": {alternativas: 1, criticidad: 1, complejidad: 1, reemplazo: 1, justificacion: "Servicios diversos y genéricos."}
+  "Salud y seguridad en el trabajo": {alternativas: 2, criticidad: 4, complejidad: 2, reemplazo: 2, justificacion: "Varios proveedores; exigencia normativa."}
+  "Publicidad exterior y módulos": {alternativas: 2, criticidad: 2, complejidad: 1, reemplazo: 1, justificacion: "Varios proveedores."}
+  "Obras › Otros – Materiales de construcción": {alternativas: 1, criticidad: 2, complejidad: 1, reemplazo: 1, justificacion: "Bienes estándar."}
+  "Servicios públicos y agua": {alternativas: 5, criticidad: 5, complejidad: 1, reemplazo: 5, justificacion: "Monopolios locales (energía, agua): sin alternativa; interrupción detiene la sede."}
+  "Obras › Implementación de seguridad (INDECI)": {alternativas: 2, criticidad: 4, complejidad: 2, reemplazo: 2, justificacion: "Varios proveedores; requisito para la licencia de funcionamiento."}
+  "Beneficios al personal": {alternativas: 2, criticidad: 1, complejidad: 1, reemplazo: 1, justificacion: "Varios proveedores; no crítico para la operación."}
+  "Contenidos y plataformas educativas": {alternativas: 3, criticidad: 4, complejidad: 3, reemplazo: 3, justificacion: "Proveedores especializados; dependencia de la plataforma."}
+  "Obras › Otros – Ampliación": {alternativas: 2, criticidad: 2, complejidad: 2, reemplazo: 2, justificacion: "Trabajos menores de obra."}
+  "Uniformes y kits": {alternativas: 1, criticidad: 2, complejidad: 1, reemplazo: 2, justificacion: "Varios confeccionistas."}
+  "Enseres y equipos menores": {alternativas: 1, criticidad: 1, complejidad: 1, reemplazo: 1, justificacion: "Bienes estándar."}
+  "Activaciones, eventos y merchandising": {alternativas: 1, criticidad: 2, complejidad: 1, reemplazo: 1, justificacion: "Oferta amplia."}
+  "Otros de marketing": {alternativas: 1, criticidad: 1, complejidad: 1, reemplazo: 1, justificacion: "Diversos."}
+  "Clasificación de riesgo y centrales": {alternativas: 4, criticidad: 3, complejidad: 3, reemplazo: 3, justificacion: "Pocas clasificadoras de riesgo autorizadas."}
+  "Mensajería, transporte y archivo": {alternativas: 1, criticidad: 2, complejidad: 1, reemplazo: 1, justificacion: "Oferta amplia."}
+  "Capacitación administrativa": {alternativas: 1, criticidad: 2, complejidad: 2, reemplazo: 1, justificacion: "Oferta amplia."}
+  "Vehículos": {alternativas: 1, criticidad: 2, complejidad: 1, reemplazo: 2, justificacion: "Varios concesionarios."}
+  "Investigación de mercado": {alternativas: 2, criticidad: 2, complejidad: 2, reemplazo: 2, justificacion: "Varias empresas."}
+  "Obras › Señalética": {alternativas: 1, criticidad: 3, complejidad: 1, reemplazo: 1, justificacion: "Muchos proveedores; requisito de seguridad."}
+  "Obras › Otros – Mejoras y mantenimiento mayor": {alternativas: 2, criticidad: 2, complejidad: 2, reemplazo: 2, justificacion: "Trabajos menores."}
+  "Obras › Impresiones y ploteos": {alternativas: 1, criticidad: 1, complejidad: 1, reemplazo: 1, justificacion: "Muchos proveedores."}
+  "Eventos y representación": {alternativas: 1, criticidad: 1, complejidad: 1, reemplazo: 1, justificacion: "Oferta amplia."}
+  "Evaluación educativa": {alternativas: 3, criticidad: 3, complejidad: 3, reemplazo: 3, justificacion: "Especialistas en evaluación; pocos proveedores."}
+  "Acreditación": {alternativas: 5, criticidad: 4, complejidad: 3, reemplazo: 4, justificacion: "Acreditadoras internacionales específicas: no hay sustituto."}
+  "Alimentación y atenciones": {alternativas: 1, criticidad: 1, complejidad: 1, reemplazo: 1, justificacion: "Oferta amplia."}
+  "Obras › Otros – Licencias, permisos y estudios": {alternativas: 4, criticidad: 5, complejidad: 3, reemplazo: 4, justificacion: "Trámites obligatorios para operar."}
+  "Clima, evaluación y comunicación interna": {alternativas: 2, criticidad: 1, complejidad: 2, reemplazo: 1, justificacion: "Varias consultoras."}
+  "Obras › Equipos audiovisuales": {alternativas: 1, criticidad: 2, complejidad: 1, reemplazo: 1, justificacion: "Muchos distribuidores."}
+  "Obras › Material promocional": {alternativas: 1, criticidad: 1, complejidad: 1, reemplazo: 1, justificacion: "Diversos."}
+  "Obras › Materiales de construcción": {alternativas: 1, criticidad: 2, complejidad: 1, reemplazo: 1, justificacion: "Bienes estándar."}

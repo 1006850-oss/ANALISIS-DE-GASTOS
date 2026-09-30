@@ -21,6 +21,6 @@ Ventana: semestres de factura **2015-S1 a 2017-S2** (`config/parametros.yaml > a
 | % del proveedor principal | gasto del mayor proveedor de la categoría ÷ gasto de la categoría × 100 | `concentracion_*` |
 
 Notas:
-- El umbral HHI > 2 500 de los hallazgos es provisional (`umbral_hhi_alto`). El Hilo 5 debe verificar y citar el umbral de la fuente oficial vigente antes de usarlo en Kraljic.
+- Umbral HHI > 1 800 (`umbral_hhi_alto`): "altamente concentrado" según las Merger Guidelines 2023 del DOJ y la FTC de EE. UU. (antes 2 500, guías de 2010). Verificado en el Hilo 5. Mide la dependencia del gasto propio en pocos proveedores, no la concentración de todo el mercado.
 - Compradores con código (P001…). La equivalencia con nombres está solo en `reporte_calidad.xlsx` (Drive).
 - Mientras la taxonomía no esté validada (pendiente #13), las cifras por categoría, subcategoría y producto son provisionales; el resto no depende de la taxonomía.
