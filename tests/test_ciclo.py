@@ -158,3 +158,31 @@ def test_ventana_del_ciclo():
     assert ec.ventana("2017-S1", C) == ("2015-S1", "2017-S1")
     assert ec.ventana("2026-S2", C) == ("2024-S1", "2026-S2")
     assert ec.semestre_menos("2026-S1", 1) == "2025-S2"
+
+
+# Equipo nuevo: preparar_equipo guarda la ruta, crea subcarpetas y avisa si falta el maestro.
+def test_preparar_equipo(tmp_path, monkeypatch, capsys):
+    import preparar_equipo as pe
+    monkeypatch.setattr(pe, "LOCAL", tmp_path / "local.yaml")
+    raiz = tmp_path / "drive"
+    raiz.mkdir()
+    assert pe.main(["--raiz", str(raiz)]) == 1                     # falta el maestro
+    assert "FALTA" in capsys.readouterr().out
+    assert all((raiz / d).is_dir() for d in ["entrada", "maestro", "historico", "salida"])
+    (raiz / "maestro" / "maestro_categorias.xlsx").write_bytes(b"x")
+    assert pe.main([]) == 0                                         # usa la ruta guardada
+    monkeypatch.setattr(ec, "LOCAL", tmp_path / "local.yaml")
+    assert ec.raiz_local() == str(raiz)
+
+
+# Archivado: registrar_ciclo agrega una fila por ciclo, sin duplicar ni mostrar RUC o nombres.
+def test_registrar_ciclo(base, tmp_path, monkeypatch):
+    import registrar_ciclo as rc
+    monkeypatch.setattr(rc, "REGISTRO", tmp_path / "ciclos.md")
+    d = base["raiz"] / "salida" / "2017-S2"
+    rc.registrar(d)
+    rc.registrar(d)
+    texto = (tmp_path / "ciclos.md").read_text(encoding="utf-8")
+    filas = [l for l in texto.splitlines() if l.startswith("| 2017-S2 |")]
+    assert len(filas) == 1 and "2015-S1 a 2017-S2" in filas[0] and "S/ " in filas[0]
+    assert not RUC.search(texto) and "PERSONA" not in texto

@@ -4,7 +4,7 @@
 - Qué es y de dónde sale
 - Requisitos oficiales verificados
 - Dónde ejecutarla: Claude Code vs. claude.ai
-- Instalación
+- Instalación en una laptop (desde cero)
 - Actualización
 - Automatización: opciones y recomendación
 
@@ -13,17 +13,17 @@
 La skill guía a Claude en el ciclo semestral: pide los insumos, ejecuta `scripts/ejecutar_ciclo.py`, se detiene en los
 puntos de parada humanos y resume los resultados sin leer nombres de personas ni RUC.
 
-**El repositorio es la única fuente de verdad.** En el repositorio solo vive `skill/analisis-gastos-compras/SKILL.md`.
-El paquete se arma con:
+**El repositorio es la única fuente de verdad.** La skill vive en `.claude/skills/analisis-gastos-compras/SKILL.md`
+y usa directamente los scripts (`scripts/`), la configuración (`config/`) y las referencias (`docs/`) del repositorio:
+no hay copias del código. Claude Code la carga sola al abrir el repositorio (skill de proyecto, compartida por git;
+ver [Skills en Claude Code](https://code.claude.com/docs/en/skills)). Una prueba (`tests/test_skill.py`) verifica
+que todas las rutas que cita el `SKILL.md` existan en el repositorio.
+
+Solo para claude.ai (opcional) se arma un ZIP con la misma estructura de carpetas:
 
 ```bash
-python scripts/empaquetar_skill.py          # → dist/analisis-gastos-compras/ y dist/analisis-gastos-compras.zip
+python scripts/empaquetar_skill.py          # → dist/analisis-gastos-compras.zip (dist/ no se versiona)
 ```
-
-El script copia los mismos scripts de `scripts/`, la configuración base de `config/`, las referencias de `docs/` y la
-plantilla del taller de Kraljic. Luego valida el paquete: formato del `SKILL.md`, archivos citados, que no haya data
-ni RUC. Una prueba (`tests/test_skill.py`) verifica que los scripts de la skill sean copias exactas del repositorio.
-`VERSION.txt` guarda el commit del que salió.
 
 Lo que cambia en cada ciclo **no va en la skill**: el maestro de categorías, la tabla de códigos de personas, el taller
 de Kraljic, el histórico, los resultados y el extracto viven en la carpeta de Drive "analisis de gastos".
@@ -68,26 +68,30 @@ claude.ai queda como alternativa para una revisión puntual.
 Prueba hecha: la skill empaquetada se ejecutó sola (sin el repositorio ni git) con pandas 2.3. Dio las mismas cifras
 oficiales que con pandas 3.0 (ver `docs/evals_skill.md`).
 
-## Instalación
+## Instalación en una laptop (desde cero)
 
 **Claude Code (recomendado)**
 
-1. Instalar Python 3.10 o superior y, en una terminal: `pip install -r requirements.txt`.
-2. Descomprimir `analisis-gastos-compras.zip` en `~/.claude/skills/`. Debe quedar
-   `~/.claude/skills/analisis-gastos-compras/SKILL.md`.
-3. En `config/parametros.yaml` de la skill, poner en `rutas > raiz_datos` la ruta local de la carpeta de Drive
-   sincronizada. También se puede indicar en cada pedido.
-4. Abrir Claude Code y pedir, por ejemplo: "necesito el análisis de gastos del semestre 2026-S2".
+1. Instalar: Python 3.10 o superior, Git, Claude Code y Google Drive para escritorio (sincronizando la carpeta
+   "analisis de gastos").
+2. Clonar el repositorio: `git clone https://github.com/1006850-oss/ANALISIS-DE-GASTOS.git` y entrar a la carpeta.
+3. `pip install -r requirements.txt`
+4. `python scripts/preparar_equipo.py --raiz "<ruta de la carpeta de Drive>"` (en Windows suele ser
+   `G:/Mi unidad/analisis de gastos`). Guarda la ruta en `config/local.yaml` (no se versiona) y revisa que esté el
+   maestro de categorías.
+5. Abrir Claude Code **en la carpeta del repositorio** y pedir, por ejemplo: "necesito el análisis de gastos del
+   semestre 2026-S2". La skill se activa sola; `.claude/settings.json` ya autoriza correr los scripts del ciclo y las
+   pruebas sin pedir permiso cada vez.
 
-**claude.ai**: Customize › Skills › Add › subir `analisis-gastos-compras.zip`. Hace falta tener activada la ejecución
-de código.
+**claude.ai (alternativa)**: `python scripts/empaquetar_skill.py` y subir `dist/analisis-gastos-compras.zip` en
+Customize › Skills › Add (requiere ejecución de código activada).
 
 ## Actualización
 
-1. Cambiar el código o las reglas **en el repositorio**, correr `pytest` y hacer commit.
-2. `python scripts/empaquetar_skill.py`.
-3. Reemplazar la carpeta en `~/.claude/skills/`, o volver a subir el ZIP en claude.ai.
-4. En el log de cada ciclo, "Código (commit)" muestra la versión de la skill usada.
+1. Cambiar el código o las reglas **en el repositorio**, correr `python -m pytest`, actualizar `docs/bitacora.md` y
+   hacer commit. En otra laptop basta `git pull`: la skill se actualiza sola.
+2. Solo si se usa claude.ai: volver a empaquetar y subir el ZIP.
+3. En el log de cada ciclo, "Código (commit)" muestra la versión usada; `docs/ciclos.md` registra cada ciclo.
 
 ## Automatización: opciones y decisión (Paso 5)
 

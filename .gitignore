@@ -12,3 +12,4 @@ __pycache__/
 .venv/
 !docs/*.csv
 dist/
+config/local.yaml

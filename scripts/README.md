@@ -93,3 +93,12 @@ python scripts/empaquetar_skill.py
 Códigos de salida del orquestador: 0 completo · 2 una validación BLOQUEA · 3 punto de parada humano · 1 error.
 Salidas en `<raiz>/salida/<periodo>/`: `1_limpieza` … `8_historico`, `estado.json`, `log_ejecucion.md`,
 `parametros_ciclo.yaml`. Parámetros del ciclo en `config/parametros.yaml > ciclo`. Ver `docs/manual_ciclo.md`.
+
+## Equipo nuevo y archivado – `preparar_equipo.py` y `registrar_ciclo.py`
+
+```bash
+python scripts/preparar_equipo.py --raiz "<carpeta de Drive>"   # primera vez en cada laptop (guarda config/local.yaml)
+python scripts/registrar_ciclo.py --periodo 2026-S2               # al cerrar un ciclo: fila en docs/ciclos.md
+```
+
+La skill del proyecto está en `.claude/skills/analisis-gastos-compras/` y usa estos mismos scripts.

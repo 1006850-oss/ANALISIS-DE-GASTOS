@@ -37,3 +37,13 @@ def test_validador_detecta_errores(tmp_path):
 def test_todo_script_del_repo_esta_en_la_skill():
     usados = {p.name for p in (RAIZ / "scripts").glob("*.py")} - {"empaquetar_skill.py"}
     assert usados <= set(es.SCRIPTS), usados - set(es.SCRIPTS)
+
+
+def test_skill_de_proyecto_en_el_repositorio():
+    """La skill vive en .claude/skills/ y todas las rutas que cita existen en el repositorio."""
+    import re
+    skill = RAIZ / ".claude" / "skills" / es.NOMBRE / "SKILL.md"
+    texto = skill.read_text(encoding="utf-8")
+    assert es.validar_frontmatter(texto) == []
+    citas = set(re.findall(r"`((?:scripts|docs|plantillas|config)/[\w.\-/]+)`", texto)) - es.GENERADOS
+    assert citas and all((RAIZ / c).exists() for c in citas), [c for c in citas if not (RAIZ / c).exists()]

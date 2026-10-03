@@ -1,13 +1,13 @@
 # Evals de la skill `analisis-gastos-compras` (Hilo 8, 2026-09-30)
 
-Definición de los casos: `skill/evals/evals.json`. Frases de activación: `skill/evals/activacion.json`.
-Resultados crudos: `skill/evals/resultados/`.
+Definición de los casos: `.claude/skills/analisis-gastos-compras/evals/evals.json`. Frases de activación: `.claude/skills/analisis-gastos-compras/evals/activacion.json`.
+Resultados crudos: `.claude/skills/analisis-gastos-compras/evals/resultados/`.
 
 ## Resumen
 
 | # | Caso | Cómo se ejecutó | Resultado |
 |---|---|---|---|
-| 1 | Ciclo normal con el extracto real | Orquestador de la skill **empaquetada**, sin repositorio ni git, con pandas 2.3. Se repitió desde el repositorio (pandas 3.0) en la corrida final | ✔ Las 18 cifras oficiales coinciden (`skill/evals/verificar_ciclo_oficial.py`) y todos los cuadres dan OK |
+| 1 | Ciclo normal con el extracto real | Orquestador de la skill **empaquetada**, sin repositorio ni git, con pandas 2.3. Se repitió desde el repositorio (pandas 3.0) en la corrida final | ✔ Las 18 cifras oficiales coinciden (`.claude/skills/analisis-gastos-compras/evals/verificar_ciclo_oficial.py`) y todos los cuadres dan OK |
 | 2 | Columna renombrada (`Descripcion` → `Detalle`) | Claude con la skill instalada (`claude -p`, data sintética), frase natural sin nombrar la skill | ✔ Activó la skill; código 2; explicó qué columna falta; propuso corregir la exportación o el mapeo; no cambió nada por su cuenta; no abrió el extracto |
 | 3 | Descripciones nuevas (1 artículo, 5 descripciones) | Igual que el 2, en dos conversaciones separadas | ✔ Turno 1: se detuvo (código 3), pidió validar solo las nuevas y no aceptó propuestas por su cuenta. Turno 2: aplicó la validación al maestro (con respaldo), registró "Kraljic provisional" y terminó con todos los cuadres OK |
 | 4 | Activación con frases naturales | `run_eval.py` de skill-creator: 10 frases que deben activarla y 10 casi iguales que no | ✔ 20/20 en la versión final (60 de 60 corridas correctas) |

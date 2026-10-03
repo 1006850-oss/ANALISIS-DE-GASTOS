@@ -239,3 +239,17 @@ Pruebas: 69 pytest (9 nuevas), todas pasan.
   80 % del gasto nuevo, máximo 200).
 - #16 Taller de Kraljic: conforme con mantener los cuadrantes provisionales hasta el taller.
 - #17 Plazos de las modalidades: de acuerdo con mantener los supuestos hasta tener los reales.
+
+## Cierre: skill en el repositorio y preparación para correr desde un hilo nuevo – 2026-10-03
+- La skill pasó de `skill/` a `.claude/skills/analisis-gastos-compras/` (skill de proyecto de Claude Code, se carga sola
+  al abrir el repositorio y viaja por git). Sus rutas apuntan a `scripts/`, `config/`, `docs/` y `plantillas/` del
+  repositorio: no hay copias del código. El ZIP para claude.ai queda como opción (`empaquetar_skill.py`, misma
+  estructura).
+- `CLAUDE.md` en la raíz: contexto del proyecto y reglas para cualquier hilo nuevo.
+- `scripts/preparar_equipo.py`: revisa Python y librerías, guarda la ruta de Drive del equipo en `config/local.yaml`
+  (no versionado), crea subcarpetas y avisa si falta el maestro. El orquestador lee esa ruta (ya no hace falta `--raiz`).
+- `scripts/registrar_ciclo.py` y `docs/ciclos.md`: registro versionado de cada ciclo (cifras de las tablas, sin nombres),
+  con commit y etiqueta `ciclo-AAAA-SN`. Se registraron los ciclos simulados 2017-S1 y 2017-S2.
+- `.claude/settings.json`: autoriza correr los scripts del ciclo y `pytest` sin pedir permiso cada vez.
+- Hallazgos: el PR #1 se había unido a `main` solo hasta el prompt del Hilo 8 (el trabajo de los Hilos 1–8 no estaba
+  en `main`); la carpeta `maestro/` de Drive está vacía (pendiente #21); tendencia con año parcial en ciclos S1 (#23).

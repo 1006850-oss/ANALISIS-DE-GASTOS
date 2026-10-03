@@ -36,8 +36,10 @@ anual y el taller de Kraljic.
 
 ## Paso a paso
 
+0. **Solo la primera vez en cada laptop**: seguir "Instalación en una laptop" de `docs/skill.md` (clonar el repositorio,
+   instalar librerías y correr `python scripts/preparar_equipo.py --raiz "<carpeta de Drive>"`).
 1. **Guardar el extracto** en `entrada/` con un nombre que diga el periodo, por ejemplo `extracto_2026-S2.xlsx`.
-2. **Abrir Claude** (Claude Code con la carpeta de Drive sincronizada) y escribir, por ejemplo:
+2. **Abrir Claude Code en la carpeta del repositorio** (con la carpeta de Drive sincronizada) y escribir, por ejemplo:
    "Necesito el análisis de gastos del semestre 2026-S2; el extracto está en entrada/extracto_2026-S2.xlsx".
 3. Claude ejecuta el orquestador. Si se detiene, explica qué falta (ver la sección siguiente). Al terminar, da un
    resumen y la lista de archivos.
@@ -48,6 +50,9 @@ anual y el taller de Kraljic.
    quien corresponda. Las alertas se investigan en `4_alertas/alertas.xlsx` (columnas Responsable, Estado,
    Conclusión).
 7. **Comparación con el ciclo anterior**: `8_historico/comparacion_resumen.md` y el Excel de comparación.
+8. **Archivar**: pedir a Claude "registra el ciclo". Corre `python scripts/registrar_ciclo.py --periodo AAAA-SN`, que
+   agrega la fila del ciclo a `docs/ciclos.md`, y hace commit con la etiqueta `ciclo-AAAA-SN` (el `git push`, cuando
+   lo apruebes). Los resultados se quedan en Drive; en el repositorio solo queda el registro.
 
 ## Puntos de parada: qué hacer
 

@@ -1,10 +1,11 @@
-"""Hilo 8 – Empaqueta la skill `analisis-gastos-compras` desde el repositorio (única fuente de verdad).
+"""Hilo 8 – Empaqueta la skill `analisis-gastos-compras` como ZIP para claude.ai (opcional).
 
-Copia a dist/analisis-gastos-compras/:
-  SKILL.md (de skill/analisis-gastos-compras/), VERSION.txt, requirements.txt,
-  scripts/*.py (los mismos del repositorio), config/*.yaml (configuración base),
-  references/*.md (de docs/), assets/kraljic_taller.xlsx (plantilla sin montos)
-y genera dist/analisis-gastos-compras.zip con la carpeta de la skill como raíz (formato de claude.ai).
+La skill vive en el repositorio en .claude/skills/analisis-gastos-compras/ y Claude Code la carga sola al abrir el
+repositorio: para trabajar en la laptop NO hace falta este script. Solo sirve para subir la skill a claude.ai.
+
+Copia a dist/analisis-gastos-compras/, con la MISMA estructura del repositorio (así las rutas del SKILL.md valen en
+los dos casos): SKILL.md, VERSION.txt, requirements.txt, scripts/*.py, config/*.yaml, docs/*.md (referencias) y
+plantillas/kraljic_taller.xlsx; y genera dist/analisis-gastos-compras.zip con la carpeta de la skill como raíz.
 
 Antes de escribir el ZIP valida: frontmatter (name ≤ 64, minúsculas/números/guiones, sin "anthropic"/"claude";
 description ≤ 200 caracteres – límite de claude.ai – y sin < >), cuerpo < 500 líneas, que existan todos los archivos
@@ -27,14 +28,16 @@ import yaml
 
 RAIZ = Path(__file__).resolve().parents[1]
 NOMBRE = "analisis-gastos-compras"
-FUENTE = RAIZ / "skill" / NOMBRE
-SCRIPTS = ["ejecutar_ciclo.py", "limpiar_validar.py", "clasificar.py", "analizar.py", "alertas.py", "kraljic.py",
+FUENTE = RAIZ / ".claude" / "skills" / NOMBRE
+SCRIPTS = ["preparar_equipo.py", "registrar_ciclo.py", "ejecutar_ciclo.py", "limpiar_validar.py", "clasificar.py", "analizar.py", "alertas.py", "kraljic.py",
            "proyectar.py", "generar_excel.py", "generar_informe.py", "historico.py"]
 CONFIG = ["parametros.yaml", "reglas_taxonomia.yaml", "reglas_alertas.yaml", "kraljic.yaml", "plan_compras.yaml",
           "README.md"]
 REFERENCIAS = ["manual_ciclo.md", "reglas_negocio.md", "diccionario_datos.md", "taxonomia.md", "indicadores.md",
-               "alertas.md", "estrategias_kraljic.md", "plan_compras.md", "informe.md", "tablero.md"]
-ASSETS = {"kraljic_taller.xlsx": RAIZ / "plantillas" / "kraljic_taller.xlsx"}
+               "alertas.md", "estrategias_kraljic.md", "plan_compras.md", "informe.md", "tablero.md",
+               "pendientes.md", "ciclos.md"]
+PLANTILLAS = ["kraljic_taller.xlsx"]
+GENERADOS = {"config/local.yaml"}   # se crean en cada equipo (preparar_equipo.py); no van en el paquete
 LIMITE_DESCRIPCION = 200     # claude.ai (centro de ayuda); la plataforma admite 1 024
 RUC = re.compile(r"(?<![\d.,])(10|15|17|20)\d{9}(?![\d.,])")
 
@@ -77,7 +80,7 @@ def construir(salida: Path) -> tuple[Path, Path]:
     destino = salida / NOMBRE
     if destino.exists():
         shutil.rmtree(destino)
-    for sub in ["scripts", "config", "references", "assets"]:
+    for sub in ["scripts", "config", "docs", "plantillas"]:
         (destino / sub).mkdir(parents=True)
     shutil.copy2(FUENTE / "SKILL.md", destino / "SKILL.md")
     for s in SCRIPTS:
@@ -85,9 +88,9 @@ def construir(salida: Path) -> tuple[Path, Path]:
     for c in CONFIG:
         shutil.copy2(RAIZ / "config" / c, destino / "config" / c)
     for r in REFERENCIAS:
-        shutil.copy2(RAIZ / "docs" / r, destino / "references" / r)
-    for nombre, origen in ASSETS.items():
-        shutil.copy2(origen, destino / "assets" / nombre)
+        shutil.copy2(RAIZ / "docs" / r, destino / "docs" / r)
+    for nombre in PLANTILLAS:
+        shutil.copy2(RAIZ / "plantillas" / nombre, destino / "plantillas" / nombre)
     reqs = [l for l in (RAIZ / "requirements.txt").read_text(encoding="utf-8").splitlines() if not l.startswith("pytest")]
     (destino / "requirements.txt").write_text("\n".join(reqs) + "\n", encoding="utf-8")
     (destino / "VERSION.txt").write_text(version() + "\n", encoding="utf-8")
@@ -97,12 +100,12 @@ def construir(salida: Path) -> tuple[Path, Path]:
 def validar_paquete(destino: Path) -> list[str]:
     texto = (destino / "SKILL.md").read_text(encoding="utf-8")
     errores = validar_frontmatter(texto)
-    for ref in sorted(set(re.findall(r"`((?:scripts|references|assets|config)/[\w.\-/]+)`", texto))):
-        if "*" not in ref and not (destino / ref).exists():
+    for ref in sorted(set(re.findall(r"`((?:scripts|docs|plantillas|config)/[\w.\-/]+)`", texto))):
+        if "*" not in ref and ref not in GENERADOS and not (destino / ref).exists():
             errores.append(f"El SKILL.md cita {ref}, que no está en el paquete")
     for f in destino.rglob("*"):
         rel = f.relative_to(destino)
-        if f.suffix in {".parquet", ".csv"} or (f.suffix in {".xlsx", ".xls"} and rel.parts[0] != "assets"):
+        if f.suffix in {".parquet", ".csv"} or (f.suffix in {".xlsx", ".xls"} and rel.parts[0] != "plantillas"):
             errores.append(f"Archivo de datos no permitido en la skill: {rel}")
         if f.suffix in {".md", ".py", ".yaml", ".txt"}:
             for i, linea in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):

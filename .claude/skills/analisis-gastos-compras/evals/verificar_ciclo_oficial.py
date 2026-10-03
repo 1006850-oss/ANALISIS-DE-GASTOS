@@ -3,7 +3,7 @@
 Las cifras esperadas son las que se validaron en los Hilos 1 a 7 (fuente: docs/bitacora.md). Este archivo no trae data
 real: solo totales agregados ya publicados en la bitácora.
 
-Uso: python skill/evals/verificar_ciclo_oficial.py <raiz>/salida/2017-S2
+Uso: python .claude/skills/analisis-gastos-compras/evals/verificar_ciclo_oficial.py <raiz>/salida/2017-S2
 """
 from __future__ import annotations
 

@@ -55,6 +55,16 @@ NOMBRES = {"1_limpieza": "Limpiar y validar", "2_clasificacion": "Clasificar", "
 OK, PAUSA, BLOQUEO, ERROR = 0, 3, 2, 1
 
 
+LOCAL = RAIZ_REPO / "config" / "local.yaml"   # ruta de Drive de ESTE equipo (no se versiona; ver preparar_equipo.py)
+
+
+def raiz_local() -> str | None:
+    """Carpeta raíz de datos guardada para este equipo en config/local.yaml (si existe)."""
+    if LOCAL.exists():
+        return (yaml.safe_load(LOCAL.read_text(encoding="utf-8")) or {}).get("raiz_datos")
+    return None
+
+
 class Pausa(Exception):
     """Punto de parada humano: el ciclo espera una decisión o una validación."""
 
@@ -126,9 +136,10 @@ class Ciclo:
         self.params = lv.cargar_parametros(a.parametros)
         self.C = self.params["ciclo"]
         R = self.params["rutas"]
-        self.raiz = Path(a.raiz or R["raiz_datos"])
+        self.raiz = Path(a.raiz or raiz_local() or R["raiz_datos"])
         if not self.raiz.exists():
-            raise SystemExit(f"No existe la carpeta raíz de datos: {self.raiz}. Use --raiz <carpeta de Drive>.")
+            raise SystemExit(f"No existe la carpeta raíz de datos: {self.raiz}. Configure el equipo con "
+                             "'python scripts/preparar_equipo.py --raiz <carpeta de Drive>' o use --raiz.")
         self.dir = self.raiz / R["salida"] / a.periodo
         self.maestro_dir = self.raiz / R["maestro"]
         self.historico = self.raiz / R["historico"]
@@ -552,7 +563,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Ejecuta el ciclo semestral completo del análisis de gastos (Hilo 8).")
     ap.add_argument("--entrada", required=True, help="Exportación del ERP (xlsx o csv)")
     ap.add_argument("--periodo", required=True, help="Ciclo, ej. 2026-S2 (último semestre de la ventana)")
-    ap.add_argument("--raiz", help="Carpeta raíz de datos (Drive sincronizado). Por defecto: parametros.yaml > rutas")
+    ap.add_argument("--raiz", help="Carpeta raíz de datos (Drive sincronizado). Por defecto: config/local.yaml "
+                                   "(lo crea preparar_equipo.py) o parametros.yaml > rutas")
     ap.add_argument("--parametros", default=str(lv.PARAMETROS_DEFECTO))
     ap.add_argument("--maestro", help="Ruta del maestro (por defecto <raiz>/maestro/maestro_categorias.xlsx)")
     ap.add_argument("--validacion", help="validar_nuevas.xlsx completado por la persona")
