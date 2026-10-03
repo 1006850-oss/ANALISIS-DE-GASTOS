@@ -1,0 +1,36 @@
+# Parámetros del plan de compras anual (Hilo 6). Aprobados por el usuario el 2026-09-30.
+# EJERCICIO METODOLÓGICO: la data termina en 2017; el plan proyecta el año siguiente al histórico.
+version: "2026-09-30"
+
+anio_plan: 2018
+anios_historia: [2015, 2016, 2017]
+inflacion_anual: 0.0          # el usuario decidió no ajustar por inflación (soles nominales)
+
+# Método principal: gasto por sede activa × N° de sedes del plan. Comparación: tendencia lineal.
+sedes:
+  plan: 54                    # sedes que se planea operar (dato del usuario; igual a 2017)
+  # Sede "activa" en un año = sede con gasto en esta categoría ese año.
+  categoria_referencia: "Servicios generales de sede"
+
+segmentacion:
+  # Por proyecto: no se proyecta con el histórico; sale del plan de obras aprobado.
+  categorias_proyecto: ["Infraestructura y obras"]
+  unidades_proyecto: ["Compra de terrenos"]
+  recurrente_meses_minimos: 30     # de 36 meses con gasto
+  recurrente_cv_maximo: 1.0        # coeficiente de variación mensual
+  esporadica_meses_maximos: 12
+
+# Modalidades de contratación (política interna del usuario). Montos con IGV. Límite superior inclusivo.
+# Nota: en dólares la política dice "300<X<=6000" y "6001<X<=25000"; se asume 3 cotizaciones para >6 000.
+modalidades:
+  - {nombre: "1 cotización", hasta_pen: 1000, hasta_usd: 300, plazo_semanas: 1}
+  - {nombre: "2 cotizaciones", hasta_pen: 20000, hasta_usd: 6000, plazo_semanas: 2}
+  - {nombre: "3 cotizaciones", hasta_pen: 80000, hasta_usd: 25000, plazo_semanas: 3}
+  - {nombre: "Licitación", hasta_pen: null, hasta_usd: null, plazo_semanas: 8}
+# Plazos: SUPUESTOS propuestos por el asistente (del requerimiento a la OC); reemplazar por los reales.
+plazo_licitacion_obras_semanas: 10   # supuesto: bases, visita, consultas, evaluación técnica y contrato
+
+calendario:
+  inicio_anio_escolar_mes: 3         # marzo
+  # Servicios recurrentes: el contrato anual debe estar vigente desde enero del año del plan.
+  mes_inicio_contratos_anuales: 1

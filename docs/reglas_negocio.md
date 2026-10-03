@@ -8,7 +8,12 @@ Versión 2026-09-25 (Hilo 0). Los valores numéricos viven en `config/parametros
 
 ## 1. Gasto
 - **Gasto = suma de "Monto facturado"** por fila, en soles.
-- Muestra: "Monto MN" era el monto de la OC repetido en cada factura. **Data real: "Monto MN" suele ser el monto de la línea.** La regla para obtener el monto total de la OC la define el Hilo 1 con la data (pendiente #9).
+- **"Monto MN" nunca se suma fila por fila.** El ERP lo llena de tres formas (verificado en el extracto real, Hilo 1):
+  - A. Monto de la línea, repetido en cada factura que la paga (ej. una línea pagada 20 % + 80 %).
+  - B. Varias líneas iguales en una sola factura (se suman).
+  - C. Total de la OC repetido en cada factura (como en la muestra).
+- **Monto total de la OC** (aprobado el 2026-09-29): para cada factura de la OC se suma "Monto MN" de sus filas y se toma **la suma más alta**. Cuadra con lo facturado en el 85 % de las OC totalmente facturadas (la regla "primera fila" solo en el 56 %).
+- Si lo facturado en una OC supera su monto total en más de 5 %, se marca `flag_facturado_excede_oc` (1 166 OC en la data real) para revisión en el Hilo 4.
 - Control: en la muestra, gasto = S/ 2 454 438.56; suma ingenua de "Monto MN" = S/ 5 864 650.11 (doble conteo).
 - Cuenta como gasto **toda factura registrada**, sin importar su estado de pago. El estado se conserva para el análisis del ciclo OC → factura.
 - "Estado de OC" = "Factura pendiente" significa **factura registrada pero no pagada** (confirmado por el usuario). Cuenta como gasto y se marca como pendiente de pago.

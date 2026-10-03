@@ -1,6 +1,6 @@
 # Parámetros del análisis de gastos de compras.
 # Cambia estos valores aquí; los scripts no deben tener números escritos en el código.
-# Versión: 2026-09-25 (Hilo 0)
+# Versión: 2026-09-29 (Hilo 1)
 
 periodo:
   # Semestres: S1 = enero–junio, S2 = julio–diciembre.
@@ -16,10 +16,13 @@ moneda:
   valor_moneda_base: "Soles"
 
 gasto:
-  # El gasto se mide con "Monto facturado" por fila. "Monto MN" es el total de la OC
-  # y se repite en cada factura: nunca se suma por fila.
+  # El gasto se mide con "Monto facturado" por fila (ya viene en soles, también en OC en dólares).
+  # "Monto MN" NO se suma por fila: puede ser el monto de la línea repetido en cada factura
+  # o el total de la OC repetido. El monto total de la OC se calcula así (Hilo 1, aprobado):
+  #   para cada factura de la OC, sumar "Monto MN" de sus filas, y tomar la suma más alta.
   campo_monto_gasto: "Monto facturado"
   campo_monto_oc: "Monto MN"
+  campo_monto_oc_me: "Monto ME"
   # Cuenta como gasto toda factura registrada, sin importar su estado de pago.
   # "Factura pendiente" (Estado de OC) = factura registrada pero no pagada: SÍ cuenta como gasto.
   # Si "Estado de OC" y "Estado Factura" se contradicen, MANDA "Estado Factura" (decisión 2026-09-29).
@@ -58,6 +61,21 @@ fraccionamiento:
   # Alerta cuando cada OC queda bajo un límite de aprobación y la suma del grupo lo supera.
   minimo_oc_en_grupo: 2
 
+analisis:
+  # Ventana de análisis del Hilo 3 (por semestre de factura). Las filas fuera de la ventana
+  # (facturas de 2014 y 2018) no se muestran; la hoja "Control" las reporta aparte (decisión 2026-09-29).
+  periodo_desde: "2015-S1"
+  periodo_hasta: "2017-S2"
+  # Montos en soles nominales (sin ajuste por inflación, decisión 2026-09-29).
+  moneda_reporte: "soles nominales"
+  # Proveedor concentrado en un comprador si ese comprador maneja al menos esta fracción de su gasto.
+  umbral_concentracion_comprador: 0.90
+  # N° de categorías principales que se listan por sede y por departamento.
+  top_categorias_por_sede: 3
+  # HHI (0–10 000) a partir del cual se reporta concentración. 1 800 = "altamente concentrado" según las
+  # Merger Guidelines 2023 del DOJ y la FTC de EE. UU. (antes 2 500, guías de 2010). Verificado en el Hilo 5.
+  umbral_hhi_alto: 1800
+
 pareto_abc:
   # Clasificación por % acumulado del gasto (proveedores ordenados de mayor a menor).
   corte_a: 0.80
@@ -66,16 +84,61 @@ pareto_abc:
 mapeo_columnas:
   # Nombre en la exportación real -> nombre estándar usado por los scripts.
   # El encabezado de la primera columna viene vacío (pandas lo lee como 0 o "Unnamed: 0").
+  "": "Año"
   "0": "Año"
   "Unnamed: 0": "Año"
-  "Nota": "Nota"            # texto libre (en la muestra se llamaba "Procura")
+  "Procura": "Nota"         # la muestra lo llama "Procura" (vacío); la data real, "Nota"
   "Empleado": "COMPRADOR"
   "Supervisor": "SUPERVISOR"
 
-columnas_ignoradas:
-  # Campos vacíos o sin valor analítico (confirmado por el usuario).
-  - "Procura"   # solo existe en la muestra
-  # "Concepto" SÍ se usa (apoyo a la taxonomía, decisión del 2026-09-29).
+columnas_ignoradas: []
+  # "Procura" de la muestra se mapea a "Nota". "Concepto" SÍ se usa (decisión del 2026-09-29).
+
+limpieza:
+  # Nombres estándar de las 26 columnas que debe traer la exportación (después del mapeo).
+  columnas_requeridas:
+    - "Año"
+    - "Mes"
+    - "Fecha de OC"
+    - "N° de Orden de Compra"
+    - "Proveedor"
+    - "Sede"
+    - "Moneda"
+    - "Monto MN"
+    - "Monto ME"
+    - "TC de OC"
+    - "Nota"
+    - "Monto facturado"
+    - "Monto FA ME"
+    - "TC de FA"
+    - "N° de Factura"
+    - "Periodo Factura"
+    - "Estado Factura"
+    - "COMPRADOR"
+    - "SUPERVISOR"
+    - "Articulo"
+    - "Descripcion"
+    - "Concepto"
+    - "Departamento"
+    - "Clase"
+    - "ID Interno OC"
+    - "Estado de OC"
+  # Meses abreviados en español de "Periodo Factura" ("may 2017").
+  meses_es: {ene: 1, feb: 2, mar: 3, abr: 4, may: 5, jun: 6, jul: 7, ago: 8, sep: 9, set: 9, oct: 10, nov: 11, dic: 12}
+  # Textos basura a eliminar de los campos de texto.
+  textos_basura: ["_x000D_"]
+  # Valores de "Estado de OC" y "Estado Factura" previstos en las reglas (otros → advertencia).
+  estados_oc_conocidos: ["Totalmente facturado", "Factura pendiente"]
+  estados_factura_conocidos: ["Pagado por completo", "Pendiente", "Aprobación pendiente"]
+  estado_oc_pendiente: "Factura pendiente"
+
+validacion:
+  # Diferencia máxima permitida (en soles) en el control de totales antes/después de limpiar.
+  tolerancia_control_totales: 0.01
+  # Una OC "excede" si lo facturado supera su monto total en más de este porcentaje.
+  tolerancia_facturado_excede_oc: 0.05
+  # Máximo de filas con banderas que se listan en reporte_calidad.xlsx (el detalle completo va en el Parquet).
+  max_filas_reporte: 20000
 
 rutas:
   # Carpeta de Google Drive "analisis de gastos" (propietario: el usuario).
@@ -104,3 +167,23 @@ volumen:
   registros_por_semestre_aprox: 17000
   registros_extracto_historico: 103050
   formato_entrada: "xlsx"
+
+ciclo:
+  # Orquestador del ciclo semestral (Hilo 8, scripts/ejecutar_ciclo.py).
+  # Ventana del análisis: los últimos N semestres hasta el periodo del ciclo (6 = 3 años, igual que 2015-S1..2017-S2),
+  # sin empezar antes de periodo_minimo (2014 tiene poca data y no se muestra: decisión 2026-09-29).
+  semestres_ventana: 6
+  periodo_minimo: "2015-S1"
+  # El plan anual de compras (Hilo 6) se recalcula solo en el ciclo de este semestre, con los 3 años completos
+  # de la ventana; en el otro ciclo se mantiene el plan vigente.
+  plan_en_semestre: "S2"
+  # Punto de parada humano por descripciones nuevas: se validan TODOS los artículos nuevos y las combinaciones
+  # nuevas que suman este % del gasto nuevo (máximo max_combinaciones, las de mayor gasto). El resto entra con la
+  # propuesta de las reglas (origen "regla"). Aprobado por el usuario el 2026-09-30.
+  validacion_nuevas:
+    pct_gasto_combinaciones: 0.80
+    max_combinaciones: 200
+  # Archivos que viven en la carpeta "maestro" de Drive (cambian cada ciclo; NO van en el repositorio ni en la skill).
+  maestro_archivo: "maestro_categorias.xlsx"
+  codigos_archivo: "codigos_personas.xlsx"
+  kraljic_taller_archivo: "kraljic_taller_completado.xlsx"

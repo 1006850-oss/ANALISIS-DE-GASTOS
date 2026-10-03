@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python scripts/preparar_equipo.py *)",
+      "Bash(python scripts/ejecutar_ciclo.py *)",
+      "Bash(python scripts/registrar_ciclo.py *)",
+      "Bash(python3 scripts/preparar_equipo.py *)",
+      "Bash(python3 scripts/ejecutar_ciclo.py *)",
+      "Bash(python3 scripts/registrar_ciclo.py *)",
+      "Bash(py scripts/preparar_equipo.py *)",
+      "Bash(py scripts/ejecutar_ciclo.py *)",
+      "Bash(py scripts/registrar_ciclo.py *)",
+      "Bash(python -m pytest *)",
+      "Bash(python3 -m pytest *)"
+    ]
+  }
+}
