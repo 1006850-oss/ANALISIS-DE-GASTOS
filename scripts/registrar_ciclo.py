@@ -29,7 +29,7 @@ Una fila por ciclo ejecutado (la escribe `scripts/registrar_ciclo.py`; no editar
 están en Google Drive › analisis de gastos › `salida/<periodo>/` y `historico/<periodo>__v<N>/`. Cifras en soles
 nominales. Las señales son para revisar, no conclusiones.
 
-| Periodo | Histórico | Fecha | Commit | Ventana | Gasto analizado | Prov. clase A | Señales (alta) | Kraljic | Plan | Maestro | Decisiones humanas |
+| Periodo | Histórico | Inicio | Commit | Ventana | Gasto analizado | Prov. clase A | Señales (alta) | Kraljic | Plan | Maestro | Decisiones humanas |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 """
 
@@ -51,7 +51,7 @@ def fila_ciclo(d: Path) -> dict:
     decisiones = [re.sub(r"^\S+ \S+ – ", "", x) for x in e["decisiones"]]
     return {
         "periodo": e["periodo"], "historico": hist.group(0) if hist else "—",
-        "fecha": e["creado"][:10], "commit": e["versiones"]["codigo"], "ventana": ventana,
+        "fecha": e["creado"][:16].replace("T", " "), "commit": e["versiones"]["codigo"], "ventana": ventana,
         "gasto": f"S/ {ctrl[clave]:,.2f}", "clase_a": f"{int(abc.loc['A', 'proveedores'])} ({abc.loc['A', 'pct_gasto']:.1f} %)",
         "senales": f"{int(R['casos'].sum()):,} ({int(R['alta'].sum()):,})", "kraljic": "; ".join(estados),
         "plan": "sí" if pasos["6_plan"]["estado"] == "ok" else "no (S1)",
@@ -64,7 +64,10 @@ def registrar(d: Path) -> Path:
     f = fila_ciclo(d)
     linea = "| " + " | ".join(str(v).replace("|", "/") for v in f.values()) + " |"
     texto = REGISTRO.read_text(encoding="utf-8") if REGISTRO.exists() else ENCABEZADO
-    lineas = [l for l in texto.splitlines() if not l.startswith(f"| {f['periodo']} | {f['historico']} |")]
+    # Solo se reemplaza la fila de ESTA misma corrida (periodo + histórico + fecha y hora de inicio); una corrida de
+    # otro equipo o carpeta agrega una fila nueva en vez de borrar la anterior.
+    clave = f"| {f['periodo']} | {f['historico']} | {f['fecha']} |"
+    lineas = [l for l in texto.splitlines() if not l.startswith(clave)]
     lineas.append(linea)
     REGISTRO.write_text("\n".join(lineas) + "\n", encoding="utf-8")
     return REGISTRO

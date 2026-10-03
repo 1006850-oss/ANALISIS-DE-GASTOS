@@ -164,6 +164,7 @@ def test_ventana_del_ciclo():
 def test_preparar_equipo(tmp_path, monkeypatch, capsys):
     import preparar_equipo as pe
     monkeypatch.setattr(pe, "LOCAL", tmp_path / "local.yaml")
+    monkeypatch.setattr(pe, "ciclos_registrados", lambda: [])
     raiz = tmp_path / "drive"
     raiz.mkdir()
     assert pe.main(["--raiz", str(raiz)]) == 1                     # falta el maestro
@@ -186,3 +187,15 @@ def test_registrar_ciclo(base, tmp_path, monkeypatch):
     filas = [l for l in texto.splitlines() if l.startswith("| 2017-S2 |")]
     assert len(filas) == 1 and "2015-S1 a 2017-S2" in filas[0] and "S/ " in filas[0]
     assert not RUC.search(texto) and "PERSONA" not in texto
+
+
+def test_preparar_equipo_exige_codigos_e_historico_si_hubo_ciclos(tmp_path, monkeypatch, capsys):
+    import preparar_equipo as pe
+    monkeypatch.setattr(pe, "LOCAL", tmp_path / "local.yaml")
+    monkeypatch.setattr(pe, "ciclos_registrados", lambda: ["2017-S2"])
+    raiz = tmp_path / "drive"
+    (raiz / "maestro").mkdir(parents=True)
+    (raiz / "maestro" / "maestro_categorias.xlsx").write_bytes(b"x")
+    assert pe.main(["--raiz", str(raiz)]) == 1
+    out = capsys.readouterr().out
+    assert "codigos_personas.xlsx" in out and "historico/ está vacío" in out

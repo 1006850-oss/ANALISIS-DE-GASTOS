@@ -27,6 +27,15 @@ LIBRERIAS = {"pandas": "pandas", "numpy": "numpy", "openpyxl": "openpyxl", "pyar
 OPCIONALES = {"python_calamine": "python-calamine (solo acelera la lectura del xlsx)"}
 
 
+def ciclos_registrados() -> list[str]:
+    """Periodos que docs/ciclos.md registra como ya corridos (en cualquier equipo)."""
+    reg = RAIZ_REPO / "docs" / "ciclos.md"
+    if not reg.exists():
+        return []
+    return sorted({l.split("|")[1].strip() for l in reg.read_text(encoding="utf-8").splitlines()
+                   if l.startswith("| ") and l.split("|")[1].strip()[:4].isdigit()})
+
+
 def revisar(raiz: Path | None, params: dict) -> list[tuple[str, bool, str]]:
     R, C = params["rutas"], params["ciclo"]
     items = [("Python 3.10 o superior", sys.version_info >= (3, 10), f"versión {sys.version.split()[0]}")]
@@ -57,15 +66,26 @@ def revisar(raiz: Path | None, params: dict) -> list[tuple[str, bool, str]]:
     maestro = raiz / R["maestro"] / C["maestro_archivo"]
     items.append(("Maestro de categorías", maestro.exists(),
                   str(maestro) if maestro.exists() else f"FALTA {maestro}: cópielo desde el respaldo (es indispensable)"))
+    previos = ciclos_registrados()
     codigos = raiz / R["maestro"] / C["codigos_archivo"]
-    items.append(("Tabla de códigos de personas", True,
-                  "existe" if codigos.exists() else "aún no existe (se crea en el primer ciclo)"))
+    if codigos.exists():
+        items.append(("Tabla de códigos de personas", True, "existe"))
+    elif previos:
+        items.append(("Tabla de códigos de personas", False,
+                      f"FALTA: docs/ciclos.md registra ciclos anteriores ({', '.join(previos)}); copie "
+                      f"{C['codigos_archivo']} a maestro/ para que P001… sigan siendo las mismas personas"))
+    else:
+        items.append(("Tabla de códigos de personas", True, "aún no existe (se crea en el primer ciclo)"))
     taller = raiz / R["maestro"] / C["kraljic_taller_archivo"]
     items.append(("Taller de Kraljic completado", True,
                   "existe" if taller.exists() else "no existe: el ciclo usará Kraljic provisional si la persona lo decide"))
     hist = raiz / R["historico"]
     ciclos = sorted(p.name for p in hist.glob("*__v*"))
-    items.append(("Histórico de ciclos", True, ", ".join(ciclos) if ciclos else "vacío (el primer ciclo no tendrá comparación)"))
+    if ciclos or not previos:
+        items.append(("Histórico de ciclos", True, ", ".join(ciclos) if ciclos else "vacío (el primer ciclo no tendrá comparación)"))
+    else:
+        items.append(("Histórico de ciclos", False, f"FALTA: docs/ciclos.md registra {', '.join(previos)} pero "
+                      "historico/ está vacío; copie el histórico antes de correr (o confirme que es una carpeta nueva)"))
     extractos = sorted(p.name for p in (raiz / R["entrada"]).glob("*.xls*"))
     items.append(("Extractos en entrada/", True, ", ".join(extractos) if extractos else "ninguno todavía"))
     return items
